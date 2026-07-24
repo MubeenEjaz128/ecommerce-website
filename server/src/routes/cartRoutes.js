@@ -10,14 +10,14 @@ router.get("/", protect, getCart);
 router.post(
 	"/items",
 	protect,
-	body("productId").isMongoId().withMessage("Product is required"),
+	body("productId").isUUID().withMessage("Product is required"),
 	body("quantity").optional().isInt({ min: 1 }),
-	body("variantId").optional().isMongoId(),
+	body("variantId").optional().isUUID(),
 	validate,
 	addItem,
 );
-router.patch("/items/:itemId", protect, param("itemId").isMongoId(), validate, updateItem);
-router.delete("/items/:itemId", protect, param("itemId").isMongoId(), validate, removeItem);
+router.patch("/items/:itemId", protect, param("itemId").isUUID(), validate, updateItem);
+router.delete("/items/:itemId", protect, param("itemId").isUUID(), validate, removeItem);
 router.delete("/", protect, clearCart);
 router.patch("/coupon", protect, body("code").trim().notEmpty().withMessage("Coupon code is required"), validate, applyCoupon);
 

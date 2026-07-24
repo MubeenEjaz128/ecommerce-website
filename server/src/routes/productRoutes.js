@@ -1,14 +1,15 @@
 const express = require("express");
 const { body, param, query } = require("express-validator");
-const Product = require("../models/Product");
+const { prisma } = require("../config/db");
+// Model Product removed
 const buildCrudController = require("../controllers/crudController");
 const { protect, authorize } = require("../middlewares/auth");
 const validate = require("../middlewares/validate");
 
-const controller = buildCrudController(Product, {
+const controller = buildCrudController(prisma.product, "Product", {
   slugField: "slug",
   searchFields: ["name", "description", "tags"],
-  populate: ["brand", "category"],
+  include: { brand: true, category: true },
   defaultSort: "-createdAt",
 });
 
@@ -21,7 +22,7 @@ async function validateVariantSkus(req, res, next) {
     const dup = skus.find((s, i) => skus.indexOf(s) !== i);
     if (dup) return res.status(400).json({ success: false, message: `Duplicate SKU in variants: ${dup}` });
 
-    const ProductVariant = require("../models/ProductVariant");
+// Model ProductVariant removed
     // Check ProductVariant collection for existing SKU used by another product
     for (const sku of skus) {
       const existing = await ProductVariant.findOne({ sku });

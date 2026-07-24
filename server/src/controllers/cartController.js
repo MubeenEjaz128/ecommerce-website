@@ -1,6 +1,4 @@
-const Cart = require("../models/Cart");
-const Product = require("../models/Product");
-const Coupon = require("../models/Coupon");
+const { prisma } = require("../config/db");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
@@ -13,14 +11,34 @@ function calculateTotals(items, shippingFee = 0, taxRate = 0.08) {
 }
 
 async function getOrCreateCart(userId) {
-  let cart = await Cart.findOne({ user: userId })
-    .populate("user")
-    .populate("items.product")
-    .populate("items.variant");
+  let cart = await prisma.cart.findUnique({
+    where: { userId },
+    include: {
+      user: true,
+      coupon: true,
+      items: {
+        include: {
+          product: true,
+          variant: true,
+        },
+      },
+    },
+  });
 
   if (!cart) {
-    cart = await Cart.create({ user: userId, items: [] });
-    cart = await Cart.findById(cart._id).populate("user").populate("items.product").populate("items.variant");
+    cart = await prisma.cart.create({
+      data: { userId },
+      include: {
+        user: true,
+        coupon: true,
+        items: {
+          include: {
+            product: true,
+            variant: true,
+          },
+        },
+      },
+    });
   }
 
   return cart;
@@ -39,129 +57,139 @@ const getCart = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, "Cart fetched", cart));
 });
 
-const ProductVariant = require("../models/ProductVariant");
-
 const addItem = asyncHandler(async (req, res) => {
   const { productId, quantity = 1, variantId = null, saveForLater = false } = req.body;
-  const product = await Product.findById(productId);
-
+  
+  const product = await prisma.product.findUnique({ where: { id: productId } });
   if (!product) {
     throw new ApiError(404, "Product not found");
   }
 
-  const cart = await Cart.findOne({ user: req.user.id });
-  const currentCart = cart || (await Cart.create({ user: req.user.id, items: [] }));
-  const existingItemIndex = currentCart.items.findIndex(
-    (item) => item.product.toString() === productId && String(item.variant || "") === String(variantId || ""),
+  const cart = await getOrCreateCart(req.user.id);
+
+  const existingItem = cart.items.find(
+    (item) => item.productId === productId && (item.variantId || null) === (variantId || null)
   );
 
-  // Prefer variant price if a variant is specified
-  let itemPrice = product.effectivePrice || product.price;
-  let resolvedVariantId = null;
+  let itemPrice = (product.compareAtPrice && product.compareAtPrice > product.price) 
+    ? (product.price - (product.price * product.discount) / 100)
+    : (product.discount > 0 ? (product.price - (product.price * product.discount) / 100) : product.price);
+
+  let resolvedVariantId = variantId || null;
+
   if (variantId) {
-    // try to find variant in product embedded variants
-    const embedded = (product.variants || []).find((v) => String(v._id) === String(variantId));
-    if (embedded) {
-      itemPrice = typeof embedded.price !== "undefined" ? embedded.price : itemPrice;
-      resolvedVariantId = embedded._id;
-    } else {
-      // fallback to ProductVariant collection
-      const pv = await ProductVariant.findById(variantId);
-      if (pv) {
-        itemPrice = typeof pv.price !== "undefined" ? pv.price : itemPrice;
-        resolvedVariantId = pv._id;
-      }
+    const pv = await prisma.productVariant.findUnique({ where: { id: variantId } });
+    if (pv) {
+      itemPrice = pv.price !== undefined ? pv.price : itemPrice;
+      resolvedVariantId = pv.id;
     }
   }
-  if (existingItemIndex >= 0) {
-    currentCart.items[existingItemIndex].quantity += Number(quantity);
-    currentCart.items[existingItemIndex].saveForLater = saveForLater;
+
+  if (existingItem) {
+    await prisma.cartItem.update({
+      where: { id: existingItem.id },
+      data: {
+        quantity: existingItem.quantity + Number(quantity),
+        saveForLater,
+      },
+    });
   } else {
-    currentCart.items.push({
-      product: product._id,
-      variant: resolvedVariantId || variantId || null,
-      quantity: Number(quantity),
-      price: itemPrice,
-      saveForLater,
+    await prisma.cartItem.create({
+      data: {
+        cartId: cart.id,
+        productId: product.id,
+        variantId: resolvedVariantId,
+        quantity: Number(quantity),
+        price: itemPrice,
+        saveForLater,
+      },
     });
   }
 
-  await currentCart.save();
-  const populatedCart = await Cart.findById(currentCart._id).populate("items.product").populate("items.variant").populate("user");
-  return res.status(200).json(new ApiResponse(200, "Item added to cart", normalizeCart(populatedCart)));
+  const updatedCart = await getOrCreateCart(req.user.id);
+  return res.status(200).json(new ApiResponse(200, "Item added to cart", normalizeCart(updatedCart)));
 });
 
 const updateItem = asyncHandler(async (req, res) => {
   const { quantity, saveForLater } = req.body;
-  const cart = await Cart.findOne({ user: req.user.id });
+  const cart = await prisma.cart.findUnique({ where: { userId: req.user.id } });
 
   if (!cart) {
     throw new ApiError(404, "Cart not found");
   }
 
-  const item = cart.items.id(req.params.itemId);
-  if (!item) {
+  const item = await prisma.cartItem.findUnique({ where: { id: req.params.itemId } });
+  if (!item || item.cartId !== cart.id) {
     throw new ApiError(404, "Cart item not found");
   }
 
+  const dataToUpdate = {};
   if (typeof quantity !== "undefined") {
-    item.quantity = Math.max(1, Number(quantity));
+    dataToUpdate.quantity = Math.max(1, Number(quantity));
   }
-
   if (typeof saveForLater !== "undefined") {
-    item.saveForLater = Boolean(saveForLater);
+    dataToUpdate.saveForLater = Boolean(saveForLater);
   }
 
-  await cart.save();
-  const populatedCart = await Cart.findById(cart._id).populate("items.product").populate("items.variant").populate("user");
-  return res.status(200).json(new ApiResponse(200, "Cart item updated", normalizeCart(populatedCart)));
+  await prisma.cartItem.update({
+    where: { id: item.id },
+    data: dataToUpdate,
+  });
+
+  const updatedCart = await getOrCreateCart(req.user.id);
+  return res.status(200).json(new ApiResponse(200, "Cart item updated", normalizeCart(updatedCart)));
 });
 
 const removeItem = asyncHandler(async (req, res) => {
-  const cart = await Cart.findOne({ user: req.user.id });
+  const cart = await prisma.cart.findUnique({ where: { userId: req.user.id } });
 
   if (!cart) {
     throw new ApiError(404, "Cart not found");
   }
 
-  cart.items.id(req.params.itemId)?.deleteOne();
-  await cart.save();
-  const populatedCart = await Cart.findById(cart._id).populate("items.product").populate("items.variant").populate("user");
-  return res.status(200).json(new ApiResponse(200, "Cart item removed", normalizeCart(populatedCart)));
+  const item = await prisma.cartItem.findUnique({ where: { id: req.params.itemId } });
+  if (item && item.cartId === cart.id) {
+    await prisma.cartItem.delete({ where: { id: item.id } });
+  }
+
+  const updatedCart = await getOrCreateCart(req.user.id);
+  return res.status(200).json(new ApiResponse(200, "Cart item removed", normalizeCart(updatedCart)));
 });
 
 const clearCart = asyncHandler(async (req, res) => {
-  const cart = await Cart.findOneAndUpdate({ user: req.user.id }, { $set: { items: [] } }, { new: true }).populate("items.product").populate("items.variant").populate("user");
+  const cart = await prisma.cart.findUnique({ where: { userId: req.user.id } });
   if (!cart) {
     throw new ApiError(404, "Cart not found");
   }
 
-  return res.status(200).json(new ApiResponse(200, "Cart cleared", normalizeCart(cart)));
+  await prisma.cartItem.deleteMany({
+    where: { cartId: cart.id },
+  });
+
+  const updatedCart = await getOrCreateCart(req.user.id);
+  return res.status(200).json(new ApiResponse(200, "Cart cleared", normalizeCart(updatedCart)));
 });
 
 const applyCoupon = asyncHandler(async (req, res) => {
   const couponCode = String(req.body.code || "").trim().toUpperCase();
-  const coupon = await Coupon.findOne({ code: couponCode, active: true });
+  const coupon = await prisma.coupon.findUnique({ where: { code: couponCode } });
 
-  if (!coupon) {
+  if (!coupon || !coupon.active) {
     throw new ApiError(404, "Coupon not found");
   }
 
-  const cart = await Cart.findOne({ user: req.user.id });
+  const cart = await prisma.cart.findUnique({ where: { userId: req.user.id } });
   if (!cart) {
     throw new ApiError(404, "Cart not found");
   }
 
-  cart.coupon = coupon._id;
-  await cart.save();
+  await prisma.cart.update({
+    where: { id: cart.id },
+    data: { couponId: coupon.id },
+  });
 
-  const populatedCart = await Cart.findById(cart._id)
-    .populate("items.product")
-    .populate("items.variant")
-    .populate("user")
-    .populate("coupon");
-
-  return res.status(200).json(new ApiResponse(200, "Coupon applied", normalizeCart(populatedCart)));
+  const updatedCart = await getOrCreateCart(req.user.id);
+  return res.status(200).json(new ApiResponse(200, "Coupon applied", normalizeCart(updatedCart)));
 });
 
 module.exports = { getCart, addItem, updateItem, removeItem, clearCart, applyCoupon };

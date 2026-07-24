@@ -1,11 +1,12 @@
 const express = require("express");
-const Brand = require("../models/Brand");
+const { prisma } = require("../config/db");
+// Model Brand removed
 const buildCrudController = require("../controllers/crudController");
 const { protect, authorize } = require("../middlewares/auth");
 const { param } = require("express-validator");
 const validate = require("../middlewares/validate");
 
-const controller = buildCrudController(Brand, { slugField: "slug" });
+const controller = buildCrudController(prisma.brand, "Brand", { slugField: "slug" });
 const router = express.Router();
 
 router.get("/", controller.list);

@@ -1,39 +1,46 @@
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
-const ApiFeatures = require("../utils/apiFeatures");
+const PrismaApiFeatures = require("../utils/apiFeatures");
 
-function buildCrudController(Model, options = {}) {
-  const { populate = [], searchFields = [], defaultSort = "-createdAt", transformCreate, transformUpdate } = options;
+function buildCrudController(prismaModel, modelName, options = {}) {
+  const { include = {}, searchFields = [], defaultSort = "createdAt:desc", transformCreate, transformUpdate } = options;
   const paramName = options.paramName || (options.slugField ? "slug" : "id");
 
-  const getQuery = (docId) => {
+  const getWhere = (docId) => {
     if (options.slugField) {
       return { [options.slugField]: docId };
     }
-
-    return { _id: docId };
+    return { id: docId };
   };
 
   return {
     list: asyncHandler(async (req, res) => {
-      let query = Model.find(options.baseFilter || {});
+      const features = new PrismaApiFeatures(req.query)
+        .search(searchFields)
+        .filter()
+        .sort(defaultSort)
+        .paginate();
 
-      if (searchFields.length > 0) {
-        query = new ApiFeatures(query, req.query).search(searchFields).filter().sort(defaultSort).limitFields().paginate().query;
-      } else {
-        query = new ApiFeatures(query, req.query).filter().sort(defaultSort).limitFields().paginate().query;
+      const queryArgs = {
+        ...features.args,
+        include: Object.keys(include).length > 0 ? include : undefined,
+      };
+
+      // Add baseFilter if any
+      if (options.baseFilter) {
+        queryArgs.where = { ...queryArgs.where, ...options.baseFilter };
       }
 
-      if (populate.length > 0) {
-        populate.forEach((entry) => {
-          query = query.populate(entry);
-        });
-      }
+      const countArgs = { where: queryArgs.where };
 
-      const [items, total] = await Promise.all([query, Model.countDocuments(query.getFilter())]);
+      const [items, total] = await Promise.all([
+        prismaModel.findMany(queryArgs),
+        prismaModel.count(countArgs),
+      ]);
+
       return res.status(200).json(
-        new ApiResponse(200, `${Model.modelName} list fetched`, items, {
+        new ApiResponse(200, `${modelName} list fetched`, items, {
           total,
           page: Number(req.query.page) || 1,
           limit: Number(req.query.limit) || 12,
@@ -42,46 +49,54 @@ function buildCrudController(Model, options = {}) {
     }),
 
     getById: asyncHandler(async (req, res) => {
-      const query = Model.findOne(getQuery(req.params[paramName]));
-      if (populate.length > 0) {
-        populate.forEach((entry) => query.populate(entry));
-      }
+      const queryArgs = {
+        where: getWhere(req.params[paramName]),
+        include: Object.keys(include).length > 0 ? include : undefined,
+      };
 
-      const item = await query;
+      const item = await prismaModel.findFirst(queryArgs);
+
       if (!item) {
-        throw new ApiError(404, `${Model.modelName} not found`);
+        throw new ApiError(404, `${modelName} not found`);
       }
 
-      return res.status(200).json(new ApiResponse(200, `${Model.modelName} fetched`, item));
+      return res.status(200).json(new ApiResponse(200, `${modelName} fetched`, item));
     }),
 
     create: asyncHandler(async (req, res) => {
       const payload = transformCreate ? await transformCreate(req) : req.body;
-      const item = await Model.create(payload);
-      return res.status(201).json(new ApiResponse(201, `${Model.modelName} created`, item));
+      const item = await prismaModel.create({ data: payload });
+      return res.status(201).json(new ApiResponse(201, `${modelName} created`, item));
     }),
 
     update: asyncHandler(async (req, res) => {
       const payload = transformUpdate ? await transformUpdate(req) : req.body;
-      const item = await Model.findOneAndUpdate(getQuery(req.params[paramName]), payload, {
-        new: true,
-        runValidators: true,
-      });
 
-      if (!item) {
-        throw new ApiError(404, `${Model.modelName} not found`);
+      // Check if exists
+      const existing = await prismaModel.findFirst({ where: getWhere(req.params[paramName]) });
+      if (!existing) {
+        throw new ApiError(404, `${modelName} not found`);
       }
 
-      return res.status(200).json(new ApiResponse(200, `${Model.modelName} updated`, item));
+      const item = await prismaModel.update({
+        where: { id: existing.id },
+        data: payload,
+      });
+
+      return res.status(200).json(new ApiResponse(200, `${modelName} updated`, item));
     }),
 
     remove: asyncHandler(async (req, res) => {
-      const item = await Model.findOneAndDelete(getQuery(req.params[paramName]));
-      if (!item) {
-        throw new ApiError(404, `${Model.modelName} not found`);
+      const existing = await prismaModel.findFirst({ where: getWhere(req.params[paramName]) });
+      if (!existing) {
+        throw new ApiError(404, `${modelName} not found`);
       }
 
-      return res.status(200).json(new ApiResponse(200, `${Model.modelName} deleted`, item));
+      const item = await prismaModel.delete({
+        where: { id: existing.id },
+      });
+
+      return res.status(200).json(new ApiResponse(200, `${modelName} deleted`, item));
     }),
   };
 }

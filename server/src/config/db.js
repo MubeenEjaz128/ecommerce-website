@@ -1,30 +1,19 @@
-const mongoose = require("mongoose");
-const env = require("./env");
+const { PrismaClient } = require("@prisma/client");
 
-async function connectDB({ retries = 5, delayMs = 2000 } = {}) {
-  mongoose.set("strictQuery", true);
+const prisma = new PrismaClient();
 
-  for (let attempt = 1; attempt <= retries; attempt += 1) {
-    try {
-      await mongoose.connect(env.mongoUri, {
-        serverSelectionTimeoutMS: 5000,
-      });
-      console.log("MongoDB connected");
-      return mongoose.connection;
-    } catch (error) {
-      console.error(`MongoDB connection attempt ${attempt} failed:`, error.message);
-      if (attempt === retries) {
-        throw error;
-      }
-      await new Promise((resolve) => setTimeout(resolve, delayMs * attempt));
-    }
+async function connectDB() {
+  try {
+    await prisma.$connect();
+    console.log("PostgreSQL connected via Prisma");
+  } catch (error) {
+    console.error("Database connection failed:", error.message);
+    process.exit(1);
   }
-
-  return mongoose.connection;
 }
 
 async function disconnectDB() {
-  await mongoose.disconnect();
+  await prisma.$disconnect();
 }
 
-module.exports = { connectDB, disconnectDB };
+module.exports = { connectDB, disconnectDB, prisma };

@@ -1,10 +1,6 @@
-const mongoose = require("mongoose");
 const slugify = require("slugify");
-const { connectDB, disconnectDB } = require("../config/db");
-const User = require("../models/User");
-const Category = require("../models/Category");
-const Brand = require("../models/Brand");
-const Product = require("../models/Product");
+const { prisma } = require("../config/db");
+const bcrypt = require("bcryptjs");
 
 const categories = ["Split ACs", "Window ACs", "Portable ACs", "Inverter ACs", "Air Coolers", "Fans", "Sale"].map(
   (name) => ({
@@ -45,40 +41,49 @@ const productTemplates = [
 ];
 
 async function seedDatabase() {
-  await connectDB();
+  await prisma.product.deleteMany({});
+  await prisma.brand.deleteMany({});
+  await prisma.category.deleteMany({});
+  await prisma.user.deleteMany({});
 
-  await Promise.all([
-    User.deleteMany({}),
-    Category.deleteMany({}),
-    Brand.deleteMany({}),
-    Product.deleteMany({}),
-  ]);
+  const adminPassword = await bcrypt.hash("Admin123!", 12);
+  const customerPassword = await bcrypt.hash("Customer123!", 12);
 
-  const [admin, customer] = await User.create([
-    {
+  const admin = await prisma.user.create({
+    data: {
       name: "Admin User",
       email: "admin@example.com",
-      password: "Admin123!",
+      password: adminPassword,
       role: "admin",
       isVerified: true,
-      avatar: { url: "https://ui-avatars.com/api/?name=Cool+Breeze+Admin", publicId: "" },
-    },
-    {
+      avatarUrl: "https://ui-avatars.com/api/?name=Cool+Breeze+Admin",
+    }
+  });
+
+  const customer = await prisma.user.create({
+    data: {
       name: "Jane Customer",
       email: "jane@example.com",
-      password: "Customer123!",
+      password: customerPassword,
       role: "customer",
       isVerified: true,
-      avatar: { url: "https://ui-avatars.com/api/?name=Jane+Customer", publicId: "" },
-    },
-  ]);
+      avatarUrl: "https://ui-avatars.com/api/?name=Jane+Customer",
+    }
+  });
 
-  const createdCategories = await Category.insertMany(categories);
-  const createdBrands = await Brand.insertMany(brands);
+  const createdCategories = [];
+  for (const c of categories) {
+    createdCategories.push(await prisma.category.create({ data: c }));
+  }
+
+  const createdBrands = [];
+  for (const b of brands) {
+    createdBrands.push(await prisma.brand.create({ data: b }));
+  }
 
   const productSeed = Array.from({ length: 24 }, (_item, index) => {
     const template = productTemplates[index % productTemplates.length];
-    const category = createdCategories[index % (createdCategories.length - 1)]; // skip Sale mostly
+    const category = createdCategories[index % (createdCategories.length - 1)];
     const brand = createdBrands[index % createdBrands.length];
     const price = template.base + index * 15;
     const name = `${brand.name} ${template.label} ${index + 1}`;
@@ -88,33 +93,34 @@ async function seedDatabase() {
       slug: slugify(name, { lower: true, strict: true }),
       description: `${brand.name} ${template.label} with ${template.tonnage} capacity, ${template.energy} energy rating, ideal for ${template.coverage}. Quiet operation and reliable cooling from Cool Breeze.`,
       shortDescription: `${template.tonnage} · ${template.energy} · ${template.coverage}`,
-      brand: brand._id,
-      category: category._id,
-      images: [
-        {
-          url: acImages[index % acImages.length],
-          alt: name,
-          publicId: "",
-          isPrimary: true,
-        },
-      ],
-      videoUrl: "",
+      brandId: brand.id,
+      categoryId: category.id,
+      images: {
+        create: [
+          {
+            url: acImages[index % acImages.length],
+            alt: name,
+            isPrimary: true,
+          }
+        ]
+      },
       specifications: {
         tonnage: template.tonnage,
         energyRating: template.energy,
         coverage: template.coverage,
       },
-      sizes: [],
       colors: ["White", "Silver"],
-      variants: [
-        {
-          size: template.tonnage,
-          color: "White",
-          sku: `CB-${index + 1}-W`,
-          stock: 20 + index,
-          price,
-        },
-      ],
+      variants: {
+        create: [
+          {
+            size: template.tonnage,
+            color: "White",
+            sku: `CB-${index + 1}-W`,
+            stock: 20 + index,
+            price,
+          }
+        ]
+      },
       price,
       compareAtPrice: price + 80,
       discount: index % 4 === 0 ? 10 : 0,
@@ -131,7 +137,9 @@ async function seedDatabase() {
     };
   });
 
-  await Product.insertMany(productSeed);
+  for (const p of productSeed) {
+    await prisma.product.create({ data: p });
+  }
 
   console.log("Cool Breeze seed completed");
   console.log(`Admin login: ${admin.email} / Admin123!`);
@@ -144,7 +152,6 @@ seedDatabase()
     process.exitCode = 1;
   })
   .finally(async () => {
-    await disconnectDB();
-    await mongoose.connection.close();
+    await prisma.$disconnect();
     process.exit();
   });

@@ -1,51 +1,94 @@
-const Wishlist = require("../models/Wishlist");
-const Product = require("../models/Product");
+const { prisma } = require("../config/db");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 
-async function getOrCreateWishlist(userId) {
-  let wishlist = await Wishlist.findOne({ user: userId }).populate("products");
-  if (!wishlist) {
-    wishlist = await Wishlist.create({ user: userId, products: [] });
-    wishlist = await Wishlist.findById(wishlist._id).populate("products");
-  }
-
-  return wishlist;
-}
-
 const getWishlist = asyncHandler(async (req, res) => {
-  const wishlist = await getOrCreateWishlist(req.user.id);
+  const wishlistItems = await prisma.wishlist.findMany({
+    where: { userId: req.user.id },
+    include: { product: true }
+  });
+  
+  const wishlist = {
+    user: req.user.id,
+    products: wishlistItems.map(item => item.product)
+  };
+
   return res.status(200).json(new ApiResponse(200, "Wishlist fetched", wishlist));
 });
 
 const addProduct = asyncHandler(async (req, res) => {
   const { productId } = req.body;
-  const product = await Product.findById(productId);
+  
+  const product = await prisma.product.findUnique({ where: { id: productId } });
   if (!product) {
     throw new ApiError(404, "Product not found");
   }
 
-  const wishlist = await getOrCreateWishlist(req.user.id);
-  const alreadyExists = wishlist.products.some((item) => item._id.toString() === productId);
-  if (!alreadyExists) {
-    wishlist.products.push(product._id);
-    await wishlist.save();
+  const existing = await prisma.wishlist.findUnique({
+    where: {
+      userId_productId: {
+        userId: req.user.id,
+        productId: product.id
+      }
+    }
+  });
+
+  if (!existing) {
+    await prisma.wishlist.create({
+      data: {
+        userId: req.user.id,
+        productId: product.id
+      }
+    });
   }
 
-  await wishlist.populate("products");
+  const wishlistItems = await prisma.wishlist.findMany({
+    where: { userId: req.user.id },
+    include: { product: true }
+  });
+  
+  const wishlist = {
+    user: req.user.id,
+    products: wishlistItems.map(item => item.product)
+  };
+
   return res.status(200).json(new ApiResponse(200, "Product added to wishlist", wishlist));
 });
 
 const removeProduct = asyncHandler(async (req, res) => {
-  const wishlist = await Wishlist.findOne({ user: req.user.id });
-  if (!wishlist) {
-    throw new ApiError(404, "Wishlist not found");
+  const { productId } = req.params;
+
+  const existing = await prisma.wishlist.findUnique({
+    where: {
+      userId_productId: {
+        userId: req.user.id,
+        productId: productId
+      }
+    }
+  });
+
+  if (existing) {
+    await prisma.wishlist.delete({
+      where: {
+        userId_productId: {
+          userId: req.user.id,
+          productId: productId
+        }
+      }
+    });
   }
 
-  wishlist.products = wishlist.products.filter((item) => item.toString() !== req.params.productId);
-  await wishlist.save();
-  await wishlist.populate("products");
+  const wishlistItems = await prisma.wishlist.findMany({
+    where: { userId: req.user.id },
+    include: { product: true }
+  });
+  
+  const wishlist = {
+    user: req.user.id,
+    products: wishlistItems.map(item => item.product)
+  };
+
   return res.status(200).json(new ApiResponse(200, "Product removed from wishlist", wishlist));
 });
 

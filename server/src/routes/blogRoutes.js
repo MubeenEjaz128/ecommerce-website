@@ -1,11 +1,12 @@
 const express = require("express");
-const Blog = require("../models/Blog");
+const { prisma } = require("../config/db");
+// Model Blog removed
 const buildCrudController = require("../controllers/crudController");
 const { protect, authorize } = require("../middlewares/auth");
 const { param, query } = require("express-validator");
 const validate = require("../middlewares/validate");
 
-const controller = buildCrudController(Blog, { slugField: "slug", populate: ["author"] });
+const controller = buildCrudController(prisma.blog, "Blog", { slugField: "slug", include: { author: true } });
 const router = express.Router();
 
 router.get("/", query("keyword").optional().isString().trim(), validate, controller.list);

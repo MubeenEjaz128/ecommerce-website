@@ -1,11 +1,12 @@
 const express = require("express");
-const Coupon = require("../models/Coupon");
+const { prisma } = require("../config/db");
+// Model Coupon removed
 const buildCrudController = require("../controllers/crudController");
 const { protect, authorize } = require("../middlewares/auth");
 const { param } = require("express-validator");
 const validate = require("../middlewares/validate");
 
-const controller = buildCrudController(Coupon, { slugField: "slug", paramName: "code" });
+const controller = buildCrudController(prisma.coupon, "Coupon", { slugField: "slug", paramName: "code" });
 const router = express.Router();
 
 router.get("/", protect, authorize("admin"), controller.list);

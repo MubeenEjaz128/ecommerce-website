@@ -1,17 +1,18 @@
 const express = require("express");
-const ProductVariant = require("../models/ProductVariant");
+const { prisma } = require("../config/db");
+// Model ProductVariant removed
 const buildCrudController = require("../controllers/crudController");
 const { protect, authorize } = require("../middlewares/auth");
 const { param } = require("express-validator");
 const validate = require("../middlewares/validate");
 
-const controller = buildCrudController(ProductVariant, { populate: ["product"] });
+const controller = buildCrudController(prisma.productVariant, "ProductVariant", { include: { product: true } });
 const router = express.Router();
 
 router.get("/", protect, authorize("admin"), controller.list);
-router.get("/:id", protect, authorize("admin"), param("id").isMongoId(), validate, controller.getById);
+router.get("/:id", protect, authorize("admin"), param("id").isUUID(), validate, controller.getById);
 router.post("/", protect, authorize("admin"), controller.create);
-router.patch("/:id", protect, authorize("admin"), param("id").isMongoId(), validate, controller.update);
-router.delete("/:id", protect, authorize("admin"), param("id").isMongoId(), validate, controller.remove);
+router.patch("/:id", protect, authorize("admin"), param("id").isUUID(), validate, controller.update);
+router.delete("/:id", protect, authorize("admin"), param("id").isUUID(), validate, controller.remove);
 
 module.exports = router;

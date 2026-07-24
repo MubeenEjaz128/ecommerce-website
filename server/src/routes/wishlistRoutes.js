@@ -10,10 +10,10 @@ router.get("/", protect, getWishlist);
 router.post(
 	"/items",
 	protect,
-	body("productId").isMongoId().withMessage("Product is required"),
+	body("productId").isUUID().withMessage("Product is required"),
 	validate,
 	addProduct,
 );
-router.delete("/items/:productId", protect, param("productId").isMongoId(), validate, removeProduct);
+router.delete("/items/:productId", protect, param("productId").isUUID(), validate, removeProduct);
 
 module.exports = router;

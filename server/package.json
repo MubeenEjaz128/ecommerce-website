@@ -12,6 +12,7 @@
     "lint:fix": "eslint \"src/**/*.js\" \"server.js\" --fix"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.5.0",
     "compression": "^1.7.4",
@@ -36,6 +37,7 @@
   "devDependencies": {
     "eslint": "^9.32.0",
     "nodemon": "^3.1.10",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "prisma": "^5.22.0"
   }
 }

@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const ApiError = require("../utils/ApiError");
 const asyncHandler = require("../utils/asyncHandler");
-const User = require("../models/User");
+const { prisma } = require("../config/db");
 const env = require("../config/env");
 
 const protect = asyncHandler(async (req, _res, next) => {
@@ -18,11 +18,16 @@ const protect = asyncHandler(async (req, _res, next) => {
   }
 
   const decoded = jwt.verify(token, env.jwtAccessSecret);
-  const user = await User.findById(decoded.id).select("-password");
+  const user = await prisma.user.findUnique({
+    where: { id: decoded.id },
+  });
 
   if (!user) {
     throw new ApiError(401, "User no longer exists");
   }
+
+  // Remove password from user object
+  delete user.password;
 
   req.user = user;
   next();

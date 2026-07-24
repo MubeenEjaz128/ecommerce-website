@@ -1,7 +1,5 @@
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY || "");
-const Cart = require("../models/Cart");
-const Payment = require("../models/Payment");
-const Order = require("../models/Order");
+const { prisma } = require("../config/db");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
@@ -10,7 +8,10 @@ const createPaymentIntent = asyncHandler(async (req, res) => {
   const userId = req.user && req.user.id;
   if (!userId) throw new ApiError(401, "Unauthorized");
 
-  const cart = await Cart.findOne({ user: userId }).populate("items.product").populate("items.variant");
+  const cart = await prisma.cart.findUnique({
+    where: { userId },
+    include: { items: { include: { product: true, variant: true } } }
+  });
   if (!cart || cart.items.length === 0) throw new ApiError(400, "Cart is empty");
 
   const subtotal = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -55,32 +56,36 @@ const webhookHandler = asyncHandler(async (req, res) => {
     const metadata = pi.metadata || {};
     try {
       let order = null;
-      if (metadata.orderId) order = await Order.findById(metadata.orderId);
+      if (metadata.orderId) {
+        order = await prisma.order.findUnique({ where: { id: metadata.orderId } });
+      }
 
-      const paymentData = {
-        order: order ? order._id : undefined,
-        user: metadata.userId || (order && order.user) || null,
-        provider: "stripe",
-        stripePaymentIntentId: pi.id,
-        transactionId: pi.charges && pi.charges.data && pi.charges.data[0] ? pi.charges.data[0].id : "",
-        amount: (pi.amount_received || pi.amount) / 100,
-        currency: pi.currency,
-        status: "succeeded",
-        rawPayload: pi,
-      };
+      if (order) {
+        const paymentData = {
+          orderId: order.id,
+          userId: metadata.userId || order.userId,
+          provider: "stripe",
+          stripePaymentIntentId: pi.id,
+          transactionId: pi.charges && pi.charges.data && pi.charges.data[0] ? pi.charges.data[0].id : "",
+          amount: (pi.amount_received || pi.amount) / 100,
+          currency: pi.currency,
+          status: "succeeded",
+          rawPayload: pi,
+        };
 
-      if (paymentData.order) {
-        await Payment.create(paymentData);
-        // Optionally: update order timeline/status here
-        if (order) {
-          order.status = "confirmed";
-          order.timeline = order.timeline || [];
-          order.timeline.push({ status: "paid", note: "Payment received via Stripe", at: new Date() });
-          await order.save();
-        }
+        await prisma.payment.create({ data: paymentData });
+        
+        await prisma.order.update({
+          where: { id: order.id },
+          data: {
+            status: "confirmed",
+            trackingSteps: {
+              create: { status: "paid", note: "Payment received via Stripe" }
+            }
+          }
+        });
       }
     } catch (err) {
-      // swallow errors but respond 200 to Stripe to avoid retries in case of processing issues
       console.error("Error processing stripe webhook:", err);
     }
   }
@@ -88,21 +93,22 @@ const webhookHandler = asyncHandler(async (req, res) => {
   return res.status(200).json({ received: true });
 });
 
-module.exports = { createPaymentIntent, webhookHandler };
-
 const createCheckoutSession = asyncHandler(async (req, res) => {
   if (!process.env.STRIPE_SECRET_KEY) return res.status(500).json(new ApiResponse(500, "Stripe not configured"));
 
   const userId = req.user && req.user.id;
   if (!userId) return res.status(401).json(new ApiResponse(401, "Unauthorized"));
 
-  const cart = await Cart.findOne({ user: userId }).populate("items.product");
+  const cart = await prisma.cart.findUnique({
+    where: { userId },
+    include: { items: { include: { product: true } } }
+  });
   if (!cart || cart.items.length === 0) return res.status(400).json(new ApiResponse(400, "Cart empty"));
 
   const line_items = cart.items.map((it) => ({
     price_data: {
       currency: "usd",
-      product_data: { name: it.product.name, metadata: { productId: String(it.product._id) } },
+      product_data: { name: it.product.name, metadata: { productId: String(it.productId) } },
       unit_amount: Math.round(it.price * 100),
     },
     quantity: it.quantity,
@@ -128,4 +134,3 @@ const getSession = asyncHandler(async (req, res) => {
 });
 
 module.exports = { createPaymentIntent, webhookHandler, createCheckoutSession, getSession };
-
