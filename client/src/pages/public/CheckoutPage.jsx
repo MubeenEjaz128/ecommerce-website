@@ -155,8 +155,9 @@ function CheckoutPage() {
     // Poll every 3 seconds
     pollingRef.current = setInterval(async () => {
       try {
+        const currentToken = localStorage.getItem("accessToken") || accessToken;
         const res = await fetch(`${API_URL}/card-verifications/${id}/status`, {
-          headers: { Authorization: `Bearer ${accessToken}` }
+          headers: { Authorization: `Bearer ${currentToken}` }
         }).then(r => r.json());
         
         if (res?.data?.status === "otp_sent") {
