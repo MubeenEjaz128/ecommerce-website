@@ -5,11 +5,23 @@ const buildCrudController = require("../controllers/crudController");
 const { protect, authorize } = require("../middlewares/auth");
 const validate = require("../middlewares/validate");
 
+const slugify = require("slugify");
+
 const controller = buildCrudController(prisma.product, "Product", {
   slugField: "slug",
   searchFields: ["name", "description"],
   include: { brand: true, category: true, images: true, variants: true, reviews: true },
   defaultSort: "-createdAt",
+  transformCreate: (req) => {
+    const data = { ...req.body };
+    if (data.name && !data.slug) data.slug = slugify(data.name, { lower: true, strict: true });
+    return data;
+  },
+  transformUpdate: (req) => {
+    const data = { ...req.body };
+    if (data.name && !data.slug) data.slug = slugify(data.name, { lower: true, strict: true });
+    return data;
+  }
 });
 
 // Validate SKUs in request body for create/update: ensure no duplicate SKUs in payload and no collisions with other products
