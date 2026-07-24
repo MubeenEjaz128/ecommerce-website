@@ -8,13 +8,13 @@ function signToken(payload, secret, expiresIn) {
 
 function createAuthTokens(user) {
   const accessToken = signToken(
-    { id: user._id.toString(), role: user.role },
+    { id: user.id, role: user.role },
     env.jwtAccessSecret,
     env.accessExpiry,
   );
 
   const refreshToken = signToken(
-    { id: user._id.toString() },
+    { id: user.id },
     env.jwtRefreshSecret,
     env.refreshExpiry,
   );

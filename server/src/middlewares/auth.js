@@ -14,23 +14,31 @@ const protect = asyncHandler(async (req, _res, next) => {
   }
 
   if (!token) {
+    console.error("Auth middleware: token missing in headers/cookies");
     throw new ApiError(401, "Not authorized, token missing");
   }
 
-  const decoded = jwt.verify(token, env.jwtAccessSecret);
-  const user = await prisma.user.findUnique({
-    where: { id: decoded.id },
-  });
+  try {
+    const decoded = jwt.verify(token, env.jwtAccessSecret);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+    });
 
-  if (!user) {
-    throw new ApiError(401, "User no longer exists");
+    if (!user) {
+      console.error(`Auth middleware: user not found for id ${decoded.id}`);
+      throw new ApiError(401, "User no longer exists");
+    }
+
+    // Remove password from user object
+    delete user.password;
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error("Auth middleware error:", err.message);
+    if (err.name === 'JsonWebTokenError') throw new ApiError(401, "Invalid token");
+    if (err.name === 'TokenExpiredError') throw new ApiError(401, "Token expired");
+    throw err;
   }
-
-  // Remove password from user object
-  delete user.password;
-
-  req.user = user;
-  next();
 });
 
 function authorize(...roles) {
