@@ -1,0 +1,89 @@
+@import "tailwindcss";
+@config "../../tailwind.config.js";
+
+:root {
+  color-scheme: light;
+  --color-canvas: 255 255 255; /* white */
+  --color-surface: 248 250 252; /* slate-50 */
+  --color-text: 15 23 42; /* slate-900 / deep navy */
+  --color-muted: 100 116 139; /* slate-500 */
+  --color-accent: 56 189 248; /* sky-400 / light blue */
+  --color-accent-soft: 224 242 254; /* sky-100 */
+  --color-border: 226 232 240; /* slate-200 */
+  --color-nav-bg: 255 255 255; /* white navbar */
+  --color-nav-bg-light: 248 250 252; /* light hover */
+  --font-display: "Manrope", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+.dark {
+  color-scheme: dark;
+  --color-canvas: 15 23 42;
+  --color-surface: 30 41 59;
+  --color-text: 248 250 252;
+  --color-muted: 148 163 184;
+  --color-accent: 56 189 248;
+  --color-accent-soft: 7 89 133;
+  --color-border: 51 65 85;
+  --color-nav-bg: 2 6 23;
+  --color-nav-bg-light: 15 23 42;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: rgb(var(--color-canvas));
+  color: rgb(var(--color-text));
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hide Google Translate Banner & Widget */
+body {
+  top: 0 !important;
+}
+.skiptranslate iframe,
+.goog-te-banner-frame {
+  display: none !important;
+}
+#goog-gt-tt {
+  display: none !important;
+  visibility: hidden !important;
+}
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+.goog-tooltip {
+  display: none !important;
+}
+.goog-tooltip:hover {
+  display: none !important;
+}
+.goog-text-highlight {
+  background-color: transparent !important;
+  border: none !important; 
+  box-shadow: none !important;
+}

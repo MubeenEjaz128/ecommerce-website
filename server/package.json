@@ -1,0 +1,41 @@
+{
+  "name": "ecommerce-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "seed": "node src/seed/seed.js",
+    "lint": "eslint \"src/**/*.js\" \"server.js\"",
+    "lint:fix": "eslint \"src/**/*.js\" \"server.js\" --fix"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^8.1.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.4",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.5",
+    "pdfkit": "^0.17.2",
+    "slugify": "^1.6.6",
+    "stripe": "^18.5.0",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "eslint": "^9.32.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2"
+  }
+}

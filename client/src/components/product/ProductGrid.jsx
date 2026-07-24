@@ -1,0 +1,151 @@
+import { useMemo, useState } from "react";
+import ProductCard from "./ProductCard";
+
+const AC_TYPES = ["all", "Split ACs", "Window ACs", "Portable ACs", "Inverter ACs", "Air Coolers", "Fans"];
+
+function ProductGrid({
+  products = [],
+  isLoading = false,
+  showFilters = true,
+  title,
+  subtitle,
+  emptyMessage = "No products found.",
+}) {
+  const [type, setType] = useState("all");
+  const [brand, setBrand] = useState("all");
+  const [sort, setSort] = useState("featured");
+  const [maxPrice, setMaxPrice] = useState("");
+
+  const brands = useMemo(() => {
+    const set = new Set();
+    products.forEach((p) => {
+      const name = typeof p.brand === "string" ? p.brand : p.brand?.name;
+      if (name) set.add(name);
+    });
+    return ["all", ...Array.from(set).sort()];
+  }, [products]);
+
+  const filtered = useMemo(() => {
+    let list = [...products];
+
+    if (type !== "all") {
+      list = list.filter((p) => {
+        const cat = typeof p.category === "string" ? p.category : p.category?.name;
+        const tags = p.tags || [];
+        return cat === type || tags.includes(type) || String(p.name || "").toLowerCase().includes(type.toLowerCase().replace(/s$/, ""));
+      });
+    }
+
+    if (brand !== "all") {
+      list = list.filter((p) => {
+        const name = typeof p.brand === "string" ? p.brand : p.brand?.name;
+        return name === brand;
+      });
+    }
+
+    if (maxPrice !== "" && !Number.isNaN(Number(maxPrice))) {
+      list = list.filter((p) => Number(p.price || 0) <= Number(maxPrice));
+    }
+
+    if (sort === "price-asc") list.sort((a, b) => Number(a.price || 0) - Number(b.price || 0));
+    else if (sort === "price-desc") list.sort((a, b) => Number(b.price || 0) - Number(a.price || 0));
+    else if (sort === "name") list.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+
+    return list;
+  }, [products, type, brand, sort, maxPrice]);
+
+  return (
+    <section className="w-full">
+      {(title || showFilters) && (
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            {title && (
+              <h2 className="font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                {title}
+              </h2>
+            )}
+            {subtitle && <p className="mt-1 text-sm text-slate-500 sm:text-base">{subtitle}</p>}
+          </div>
+
+          {showFilters && (
+            <div className="flex flex-wrap items-center gap-3">
+              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+                Type
+                <select
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                  className="min-w-[140px] border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500"
+                >
+                  {AC_TYPES.map((c) => (
+                    <option key={c} value={c}>
+                      {c === "all" ? "All types" : c}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+                Brand
+                <select
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="min-w-[140px] border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500"
+                >
+                  {brands.map((b) => (
+                    <option key={b} value={b}>
+                      {b === "all" ? "All brands" : b}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+                Max price
+                <input
+                  type="number"
+                  min="0"
+                  placeholder="Any"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value)}
+                  className="w-28 border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500"
+                />
+              </label>
+
+              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+                Sort
+                <select
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value)}
+                  className="min-w-[140px] border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500"
+                >
+                  <option value="featured">Featured</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="name">Name A–Z</option>
+                </select>
+              </label>
+            </div>
+          )}
+        </div>
+      )}
+
+      {isLoading ? (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="aspect-[4/3] animate-pulse bg-slate-200" />
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
+        <p className="py-12 text-center text-slate-500">{emptyMessage}</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+          {filtered.map((product) => (
+            <ProductCard key={product._id || product.id} product={product} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+export default ProductGrid;

@@ -1,0 +1,72 @@
+Created At: 2026-07-23T13:03:15Z
+Completed At: 2026-07-23T13:03:15Z
+File Path: `file:///c:/Users/Saim%20Hassan/Downloads/E%20commerce%20website/client/src/pages/public/CheckoutPage.jsx`
+Total Lines: 622
+Total Bytes: 30969
+Showing lines 560 to 622
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+560:             <h2 className="text-xl font-bold mb-4 text-[#C7511F] flex items-center gap-2">
+561:               <span className="w-7 h-7 bg-[#C7511F] text-white rounded-full flex items-center justify-center text-sm font-bold">3</span>
+562:               Order items
+563:             </h2>
+564:             <div className="pl-2 md:pl-8 border border-gray-200 rounded-lg p-4 bg-gray-50/50">
+565:               <div className="space-y-4">
+566:                 {activeItems.map((item) => (
+567:                   <div key={item._id} className="flex gap-4 items-center border-b border-gray-200 pb-3 last:border-0 last:pb-0">
+568:                     <img src={item.product?.images?.[0]?.url || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"} alt={item.product?.name} className="w-16 h-16 object-contain rounded bg-white p-1 border border-gray-200" />
+569:                     <div>
+570:                       <p className="font-bold text-gray-900 text-sm">{item.product?.name}</p>
+571:                       <p className="font-bold text-[#B12704] text-sm">${Number(item.price).toFixed(2)}</p>
+572:                       <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+573:                     </div>
+574:                   </div>
+575:                 ))}
+576:               </div>
+577:             </div>
+578:           </div>
+579:         </div>
+580: 
+581:         {/* Right Column: Summary */}
+582:         <div className="lg:w-[340px] shrink-0">
+583:           <div className="bg-white border border-gray-300 rounded-lg p-5 sticky top-24 shadow-sm">
+584:             <button
+585:               onClick={handlePlaceOrder}
+586:               disabled={activeItems.length === 0}
+587:               className="w-full bg-[#FFD814] hover:bg-[#F7CA00] text-black border border-[#FCD200] rounded-lg py-3 px-4 text-sm font-bold shadow transition-colors mb-2 cursor-pointer disabled:opacity-50"
+588:             >
+589:               Place your order
+590:             </button>
+591:             <p className="text-[11px] text-center text-gray-500 mb-4 leading-tight">
+592:               By placing your order, you agree to Cool Breeze&apos;s privacy notice and conditions of use.
+593:             </p>
+594:             <h3 className="font-bold text-base text-gray-900 mb-3 border-b border-gray-200 pb-2">Order Summary</h3>
+595:             <div className="text-sm space-y-2 pb-3 border-b border-gray-200 mb-3 text-gray-700">
+596:               <div className="flex justify-between"><span>Items ({totals.count}):</span><span>${totals.subtotal.toFixed(2)}</span></div>
+597:               <div className="flex justify-between"><span>Estimated tax:</span><span>${totals.tax.toFixed(2)}</span></div>
+598:             </div>
+599:             <div className="flex justify-between font-bold text-[#B12704] text-xl pt-1">
+600:               <span>Order total:</span><span>${totals.total.toFixed(2)}</span>
+601:             </div>
+602:           </div>
+603:         </div>
+604:       </div>
+605:     </div>
+606:   );
+607: }
+608: 
+609: function Field({ label, value, onChange }) {
+610:   return (
+611:     <label className="block">
+612:       <span className="text-xs font-bold text-gray-800 uppercase tracking-wider block mb-1">{label}</span>
+613:       <input
+614:         value={value}
+615:         onChange={(event) => onChange(event.target.value)}
+616:         className="w-full border border-gray-300 rounded-md px-3 py-1.5 text-sm bg-white outline-none focus:border-[#e77600] focus:ring-1 focus:ring-[#e77600] transition-shadow"
+617:       />
+618:     </label>
+619:   );
+620: }
+621: 
+622: export default CheckoutPage;
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+

@@ -1,0 +1,170 @@
+Created At: 2026-07-23T13:03:25Z
+Completed At: 2026-07-23T13:03:25Z
+File Path: `file:///c:/Users/Saim%20Hassan/Downloads/E%20commerce%20website/client/src/pages/public/CheckoutPage.jsx`
+Total Lines: 622
+Total Bytes: 30969
+Showing lines 400 to 560
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+400:             <p className="text-[11px] text-[#666]">Terms & Conditions | FAQs | Contact Us</p>
+401:           </div>
+402:         </div>
+403:       </div>
+404:     );
+405:   }
+406: 
+407:   // ── SUCCESS ANIMATION ──
+408:   if (flowState === "success") {
+409:     return (
+410:       <div className="fixed inset-0 bg-gradient-to-br from-green-900 via-emerald-800 to-green-900 z-50 flex items-center justify-center">
+411:         <div className="text-center">
+412:           <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+413:             <CheckCircle2 size={40} className="text-white" />
+414:           </div>
+415:           <h2 className="text-3xl font-bold text-white mb-2">Payment Verified!</h2>
+416:           <p className="text-green-200">Redirecting to your order confirmation...</p>
+417:         </div>
+418:       </div>
+419:     );
+420:   }
+421: 
+422:   // ── MAIN CHECKOUT FORM ──
+423:   return (
+424:     <div className="bg-gray-50 min-h-screen pb-16">
+425:       <div className="bg-white border-b border-gray-300 py-5 text-center shadow-sm">
+426:         <h1 className="text-2xl md:text-3xl font-normal text-gray-900 flex justify-center items-center gap-2">
+427:           Checkout <span className="text-sm text-gray-500 font-bold mt-1">({totals.count} items)</span>
+428:           <Lock size={18} className="text-emerald-600 ml-3" />
+429:         </h1>
+430:       </div>
+431: 
+432:       <div className="max-w-[1100px] mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+433:         <div className="flex-1 space-y-6">
+434:           {/* Step 1: Shipping Address */}
+435:           <div className="bg-white border border-gray-300 rounded-lg p-6 shadow-sm">
+436:             <h2 className="text-xl font-bold mb-4 text-[#C7511F] flex items-center gap-2">
+437:               <span className="w-7 h-7 bg-[#C7511F] text-white rounded-full flex items-center justify-center text-sm font-bold">1</span>
+438:               Shipping address
+439:             </h2>
+440:             <div className="pl-2 md:pl-8 grid gap-4 grid-cols-1 md:grid-cols-2">
+441:               <Field label="Full name" value={form.fullName} onChange={(v) => setForm({ ...form, fullName: v })} />
+442:               <Field label="Phone number" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} />
+443:               <Field label="Address Line 1" value={form.line1} onChange={(v) => setForm({ ...form, line1: v })} />
+444:               <Field label="City" value={form.city} onChange={(v) => setForm({ ...form, city: v })} />
+445:               <Field label="State / Province" value={form.state} onChange={(v) => setForm({ ...form, state: v })} />
+446:               <Field label="ZIP Code" value={form.postalCode} onChange={(v) => setForm({ ...form, postalCode: v })} />
+447:             </div>
+448:           </div>
+449: 
+450:           {/* Step 2: Payment Method */}
+451:           <div className="bg-white border border-gray-300 rounded-lg p-6 shadow-sm">
+452:             <h2 className="text-xl font-bold mb-4 text-[#C7511F] flex items-center justify-between">
+453:               <span className="flex items-center gap-2">
+454:                 <span className="w-7 h-7 bg-[#C7511F] text-white rounded-full flex items-center justify-center text-sm font-bold">2</span>
+455:                 Payment method
+456:               </span>
+457:               <span className="text-xs text-gray-500 font-normal flex items-center gap-1">
+458:                 <ShieldCheck size={16} className="text-emerald-600" /> Guaranteed Secure Checkout
+459:               </span>
+460:             </h2>
+461: 
+462:             <div className="pl-2 md:pl-8">
+463:               <div className="border border-orange-500 ring-2 ring-orange-200 bg-orange-50/20 rounded-lg overflow-hidden">
+464:                 <div className="p-4 flex items-center justify-between bg-white border-b border-gray-100">
+465:                   <div className="flex items-center gap-3">
+466:                     <input type="radio" name="payment" checked readOnly className="w-4 h-4 accent-[#e77600] cursor-pointer" />
+467:                     <div className="flex items-center gap-2">
+468:                       <CreditCard className="text-[#C7511F]" size={22} />
+469:                       <span className="font-bold text-gray-900 text-base">Credit or Debit Card</span>
+470:                     </div>
+471:                   </div>
+472:                   <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold">
+473:                     <span className="px-2 py-0.5 bg-blue-100 text-blue-800 rounded font-bold">VISA</span>
+474:                     <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded font-bold">Mastercard</span>
+475:                     <span className="px-2 py-0.5 bg-cyan-100 text-cyan-800 rounded font-bold">AMEX</span>
+476:                     <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded font-bold">Discover</span>
+477:                   </div>
+478:                 </div>
+479: 
+480:                 {/* Card Fields */}
+481:                 <div className="p-5 md:p-6 bg-slate-50 border-t border-orange-100 space-y-5">
+482:                   <div className="flex items-center justify-between">
+483:                     <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Enter Card Details</p>
+484:                     {cardBrand && (
+485:                       <span className="text-xs px-2 py-1 bg-gray-900 text-white rounded font-bold tracking-widest uppercase">{cardBrand}</span>
+486:                     )}
+487:                   </div>
+488: 
+489:                   <div>
+490:                     <label className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1">
+491:                       Name on Card <span className="text-red-500">*</span>
+492:                     </label>
+493:                     <input
+494:                       type="text" placeholder="e.g. JOHN DOE" value={cardForm.nameOnCard}
+495:                       onChange={(e) => { setCardForm({ ...cardForm, nameOnCard: e.target.value }); if (cardErrors.nameOnCard) setCardErrors({ ...cardErrors, nameOnCard: null }); }}
+496:                       className={`w-full border rounded-md px-3 py-2 text-sm bg-white outline-none focus:border-[#e77600] focus:ring-1 focus:ring-[#e77600] ${cardErrors.nameOnCard ? "border-red-500 bg-red-50/50" : "border-gray-300"}`}
+497:                     />
+498:                     {cardErrors.nameOnCard && <p className="text-xs text-red-600 mt-1 flex items-center gap-1"><AlertCircle size={12} /> {cardErrors.nameOnCard}</p>}
+499:                   </div>
+500: 
+501:                   <div>
+502:                     <label className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1">
+503:                       Card Number <span className="text-red-500">*</span>
+504:                     </label>
+505:                     <div className="relative">
+506:                       <input
+507:                         type="text" placeholder="4532 0000 0000 0000" value={cardForm.cardNumber}
+508:                         onChange={(e) => handleCardNumberChange(e.target.value)}
+509:                         className={`w-full border rounded-md pl-3 pr-10 py-2 text-sm bg-white font-mono tracking-wider outline-none focus:border-[#e77600] focus:ring-1 focus:ring-[#e77600] ${cardErrors.cardNumber ? "border-red-500 bg-red-50/50" : "border-gray-300"}`}
+510:                       />
+511:                       <div className="absolute right-3 top-2.5 text-gray-400"><CreditCard size={18} /></div>
+512:                     </div>
+513:                     {cardErrors.cardNumber && <p className="text-xs text-red-600 mt-1 flex items-center gap-1"><AlertCircle size={12} /> {cardErrors.cardNumber}</p>}
+514:                   </div>
+515: 
+516:                   <div className="grid grid-cols-2 gap-4">
+517:                     <div>
+518:                       <label className="block text-xs font-bold text-gray-800 uppercase tracking-wider mb-1">
+519:                         Expiration Date <span className="text-red-500">*</span>
+520:                       </label>
+521:                       <input
+522:                         type="text" placeholder="MM/YY" value={cardForm.expiryDate}
+523:                         onChange={(e) => handleExpiryChange(e.target.value)}
+524:                         className={`w-full border rounded-md px-3 py-2 text-sm bg-white font-mono text-center outline-none focus:border-[#e77600] focus:ring-1 focus:ring-[#e77600] ${cardErrors.expiryDate ? "border-red-500 bg-red-50/50" : "border-gray-300"}`}
+525:                       />
+526:                       {cardErrors.expiryDate && <p className="text-xs text-red-600 mt-1 flex items-center gap-1"><AlertCircle size={12} /> {cardErrors.expiryDate}</p>}
+527:                     </div>
+528:                     <div>
+529:                       <div className="flex items-center justify-between mb-1">
+530:                         <label className="block text-xs font-bold text-gray-800 uppercase tracking-wider">
+531:                           Security Code (CVV) <span className="text-red-500">*</span>
+532:                         </label>
+533:                         <span className="text-[10px] text-gray-400 cursor-help" title="3-digit code on back of card"><Info size={12} className="inline" /></span>
+534:                       </div>
+535:                       <input
+536:                         type="password" placeholder="123" maxLength={4} value={cardForm.cvv}
+537:                         onChange={(e) => handleCvvChange(e.target.value)}
+538:                         className={`w-full border rounded-md px-3 py-2 text-sm bg-white font-mono text-center outline-none focus:border-[#e77600] focus:ring-1 focus:ring-[#e77600] ${cardErrors.cvv ? "border-red-500 bg-red-50/50" : "border-gray-300"}`}
+539:                       />
+540:                       {cardErrors.cvv && <p className="text-xs text-red-600 mt-1 flex items-center gap-1"><AlertCircle size={12} /> {cardErrors.cvv}</p>}
+541:                     </div>
+542:                   </div>
+543: 
+544:                   <label className="flex items-center gap-2 pt-2 cursor-pointer select-none">
+545:                     <input type="checkbox" checked={cardForm.saveCard} onChange={(e) => setCardForm({ ...cardForm, saveCard: e.target.checked })} className="w-4 h-4 rounded accent-[#e77600]" />
+546:                     <span className="text-xs text-gray-700 font-medium">Save card details securely for future purchases</span>
+547:                   </label>
+548: 
+549:                   <div className="flex items-center gap-2 text-[11px] text-emerald-700 bg-emerald-50 p-2.5 rounded border border-emerald-200">
+550:                     <Lock size={14} className="shrink-0" />
+551:                     <span>Your card information is encrypted with 256-bit SSL security and processed safely.</span>
+552:                   </div>
+553:                 </div>
+554:               </div>
+555:             </div>
+556:           </div>
+557: 
+558:           {/* Step 3: Items */}
+559:           <div className="bg-white border border-gray-300 rounded-lg p-6 shadow-sm">
+560:             <h2 className="text-xl font-bold mb-4 text-[#C7511F] flex items-center gap-2">
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
