@@ -61,7 +61,7 @@ function ProductDetailsPage() {
   }
 
   const variants = product.variants || [];
-  const selectedVariantObj = variants.find((v) => String(v._id) === String(selectedVariant));
+  const selectedVariantObj = variants.find((v) => String(v.id || v._id) === String(selectedVariant));
   const currentPrice = selectedVariantObj
     ? selectedVariantObj.price ?? product.effectivePrice ?? product.price
     : product.effectivePrice ?? product.price;
@@ -81,7 +81,7 @@ function ProductDetailsPage() {
     }
     try {
       await addCartItem({
-        productId: product._id,
+        productId: product.id || product._id,
         variantId: selectedVariant || null,
         quantity,
       }).unwrap();
@@ -94,7 +94,7 @@ function ProductDetailsPage() {
   const handleAddToWishlist = async () => {
     if (!accessToken) return toast.info("Sign in to save items to your list");
     try {
-      await addWishlistItem(product._id).unwrap();
+      await addWishlistItem(product.id || product._id).unwrap();
       toast.success("Added to wishlist");
     } catch (err) {
       toast.error(err?.data?.message || "Failed to add to wishlist");
@@ -196,11 +196,11 @@ function ProductDetailsPage() {
                 </button>
                 {variants.map((v) => (
                   <button
-                    key={v._id}
+                    key={v.id || v._id}
                     type="button"
-                    onClick={() => setSelectedVariant(v._id)}
+                    onClick={() => setSelectedVariant(v.id || v._id)}
                     className={`border px-3 py-2 text-sm transition ${
-                      selectedVariant === v._id
+                      selectedVariant === (v.id || v._id)
                         ? "border-sky-600 bg-sky-50 text-sky-800"
                         : "border-slate-300 hover:border-slate-400"
                     }`}

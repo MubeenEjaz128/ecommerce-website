@@ -55,11 +55,11 @@ function WishlistPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {products.map((product) => (
-              <div key={product._id} className="flex flex-col border border-gray-200 rounded-lg overflow-hidden p-4 group">
-                <Link to={`/products/${product.slug || product._id}`} className="block relative aspect-square bg-gray-50 overflow-hidden mb-4">
+              <div key={product.id || product._id} className="flex flex-col border border-gray-200 rounded-lg overflow-hidden p-4 group">
+                <Link to={`/products/${product.slug || product.id}`} className="block relative aspect-square bg-gray-50 overflow-hidden mb-4">
                   <img src={product.images?.[0]?.url || "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80"} alt={product.name} className="object-contain w-full h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-300" />
                 </Link>
-                <Link to={`/products/${product.slug || product._id}`}>
+                <Link to={`/products/${product.slug || product.id}`}>
                   <h3 className="text-sm font-medium text-gray-900 line-clamp-2 hover:text-[#C7511F] hover:underline">{product.name}</h3>
                 </Link>
                 <div className="text-lg font-bold text-[#B12704] mt-2 mb-4">${Number(product.price).toFixed(2)}</div>
@@ -67,14 +67,14 @@ function WishlistPage() {
                 <div className="mt-auto flex flex-col gap-2">
                   <button 
                     disabled={isAdding}
-                    onClick={() => handleMoveToCart(product._id)}
+                    onClick={() => handleMoveToCart(product.id || product._id)}
                     className="w-full bg-[#FFD814] hover:bg-[#F7CA00] border border-[#FCD200] rounded-full py-1.5 px-3 text-sm font-medium shadow-sm transition-colors"
                   >
                     Move to Cart
                   </button>
                   <button 
                     onClick={() => {
-                      removeWishlistItem(product._id);
+                      removeWishlistItem(product.id || product._id);
                       toast.info("Removed from list");
                     }}
                     className="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-full py-1.5 px-3 text-sm shadow-sm transition-colors"

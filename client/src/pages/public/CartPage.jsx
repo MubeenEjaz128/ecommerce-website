@@ -91,9 +91,9 @@ function CartPage() {
             ) : (
               <ul className="divide-y divide-stone-200">
                 {activeItems.map((item) => (
-                  <li key={item._id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
+                  <li key={item.id || item._id} className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
                     <Link
-                      to={`/products/${item.product?.slug || item.product?._id}`}
+                      to={`/products/${item.product?.slug || item.product?.id}`}
                       className="h-28 w-28 shrink-0 overflow-hidden bg-stone-100"
                     >
                       <img
@@ -108,7 +108,7 @@ function CartPage() {
 
                     <div className="flex flex-1 flex-col gap-2">
                       <Link
-                        to={`/products/${item.product?.slug || item.product?._id}`}
+                        to={`/products/${item.product?.slug || item.product?.id}`}
                         className="font-medium text-stone-900 transition hover:text-teal-700"
                       >
                         {item.product?.name}
@@ -129,7 +129,7 @@ function CartPage() {
                             aria-label="Decrease quantity"
                             className="p-2 text-stone-600 transition hover:bg-stone-50"
                             onClick={() =>
-                              handleUpdateItem(item._id, {
+                              handleUpdateItem(item.id || item._id, {
                                 quantity: Math.max(1, item.quantity - 1),
                               })
                             }
@@ -142,7 +142,7 @@ function CartPage() {
                             aria-label="Increase quantity"
                             className="p-2 text-stone-600 transition hover:bg-stone-50"
                             onClick={() =>
-                              handleUpdateItem(item._id, { quantity: item.quantity + 1 })
+                              handleUpdateItem(item.id || item._id, { quantity: item.quantity + 1 })
                             }
                           >
                             <Plus size={14} />
@@ -150,7 +150,7 @@ function CartPage() {
                         </div>
                         <button
                           type="button"
-                          onClick={() => handleRemoveItem(item._id)}
+                          onClick={() => handleRemoveItem(item.id || item._id)}
                           className="flex items-center gap-1 text-sm text-stone-500 transition hover:text-red-600"
                         >
                           <Trash2 size={14} /> Remove

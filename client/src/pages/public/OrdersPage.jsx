@@ -39,17 +39,17 @@ function OrdersPage() {
           <EmptyState />
         ) : null}
         {orders.map((order) => (
-          <article key={order._id} className="rounded-[1.75rem] border border-border bg-surface p-6 shadow-soft">
+          <article key={order.id || order._id} className="rounded-[1.75rem] border border-border bg-surface p-6 shadow-soft">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="text-xl font-bold text-text">{order.orderNumber}</h2>
                 <p className="mt-1 text-sm text-muted">Status: {order.status} · Total: ${Number(order.totalAmount).toFixed(2)}</p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <Link to={`/orders/${order._id}`} className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-text">
+                <Link to={`/orders/${order.id || order._id}`} className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-text">
                   View details
                 </Link>
-                <button type="button" onClick={() => cancelOrder(order._id)} className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-text">
+                <button type="button" onClick={() => cancelOrder(order.id || order._id)} className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-text">
                   Cancel order
                 </button>
               </div>

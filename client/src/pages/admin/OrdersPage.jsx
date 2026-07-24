@@ -332,7 +332,7 @@ function AdminOrders() {
                   </div>
                 ) : (
                   orders.map((o) => (
-                    <div key={o._id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
+                    <div key={o.id || o._id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:shadow-md transition-shadow">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div>
                           <div className="font-bold text-gray-900">{o.orderNumber}</div>
@@ -350,13 +350,13 @@ function AdminOrders() {
                           </span>
                           <button
                             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold rounded-lg transition-colors cursor-pointer"
-                            onClick={() => setExpanded(expanded === o._id ? null : o._id)}
+                            onClick={() => setExpanded(expanded === (o.id || o._id) ? null : (o.id || o._id))}
                           >
-                            {expanded === o._id ? "Hide Details" : "View Details"}
+                            {expanded === (o.id || o._id) ? "Hide Details" : "View Details"}
                           </button>
                         </div>
                       </div>
-                      {expanded === o._id && (
+                      {expanded === (o.id || o._id) && (
                         <div className="mt-3">
                           <div className="mb-4">
                             <h4 className="font-semibold text-sm mb-1">Customer Information</h4>
@@ -369,7 +369,7 @@ function AdminOrders() {
                           <div className="text-sm text-muted">{o.items?.length || 0} items — Total: ${Number(o.totalAmount || o.total || 0).toFixed(2)}</div>
                           <ul className="mt-2 space-y-2 mb-4">
                             {(o.items || []).map((it, idx) => (
-                              <li key={it._id || idx} className="flex items-center justify-between">
+                              <li key={it.id || it._id || idx} className="flex items-center justify-between">
                                 <div>{it.name || "Unknown Product"} {it.sku ? `(${it.sku})` : ""}</div>
                                 <div>{it.quantity || 1} × ${Number(it.price || 0).toFixed(2)}</div>
                               </li>
@@ -411,7 +411,7 @@ function AdminOrders() {
                           <div className="mt-4 pt-4 border-t border-gray-100 flex gap-2">
                             <select
                               defaultValue={o.status}
-                              onChange={async (e) => { await updateOrderStatus({ id: o._id, status: e.target.value }); refetch(); }}
+                              onChange={async (e) => { await updateOrderStatus({ id: o.id || o._id, status: e.target.value }); refetch(); }}
                               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white cursor-pointer"
                             >
                               <option value="pending">Pending</option>
@@ -423,7 +423,7 @@ function AdminOrders() {
                             </select>
                             <button
                               className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 font-semibold rounded-lg text-sm transition-colors cursor-pointer"
-                              onClick={async () => { if (confirm("Refund this order?")) { await refundOrder(o._id).unwrap(); refetch(); } }}
+                              onClick={async () => { if (confirm("Refund this order?")) { await refundOrder(o.id || o._id).unwrap(); refetch(); } }}
                             >
                               Refund
                             </button>

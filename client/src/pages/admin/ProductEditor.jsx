@@ -25,8 +25,8 @@ function ProductEditor() {
       name: product.name || "",
       description: product.description || "",
       price: product.price || 0,
-      brand: product.brand?._id || product.brand || "",
-      category: product.category?._id || product.category || "",
+      brand: product.brand?.id || product.brand?._id || product.brand || "",
+      category: product.category?.id || product.category?._id || product.category || "",
       images: product.images || [],
       variants: product.variants || [],
     });
@@ -121,14 +121,14 @@ function ProductEditor() {
             <span className="block text-sm font-semibold text-gray-700 mb-1">Brand <span className="text-red-500">*</span></span>
             <select value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm">
               <option value="">Select brand</option>
-              {brands.map((b) => (<option key={b._id} value={b._id}>{b.name}</option>))}
+              {brands.map((b) => (<option key={b.id || b._id} value={b.id || b._id}>{b.name}</option>))}
             </select>
           </label>
           <label className="block">
             <span className="block text-sm font-semibold text-gray-700 mb-1">Category <span className="text-red-500">*</span></span>
             <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm">
               <option value="">Select category</option>
-              {categories.map((c) => (<option key={c._id} value={c._id}>{c.name}</option>))}
+              {categories.map((c) => (<option key={c.id || c._id} value={c.id || c._id}>{c.name}</option>))}
             </select>
           </label>
         </div>

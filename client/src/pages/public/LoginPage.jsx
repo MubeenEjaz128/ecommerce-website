@@ -30,7 +30,7 @@ function LoginPage() {
       if (guestCartItems && guestCartItems.length > 0) {
         try {
           for (const item of guestCartItems) {
-            await addCartItem({ productId: item.product._id, quantity: item.quantity }).unwrap();
+            await addCartItem({ productId: item.product.id || item.product._id, quantity: item.quantity }).unwrap();
           }
           dispatch(clearGuestCart());
         } catch (error) {
