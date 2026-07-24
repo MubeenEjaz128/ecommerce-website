@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Lock, ShieldCheck, CreditCard, CheckCircle2, AlertCircle, Info, Loader2 } from "lucide-react";
 import { VisaLogo, MastercardLogo, AmexLogo, DiscoverLogo } from "../../components/ui/CardLogos";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1";
 
 function CheckoutPage() {
   const navigate = useNavigate();
