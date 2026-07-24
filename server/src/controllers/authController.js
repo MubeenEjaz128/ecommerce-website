@@ -132,15 +132,19 @@ const refresh = asyncHandler(async (req, res) => {
   try {
     decoded = jwt.verify(refreshToken, env.jwtRefreshSecret);
   } catch (error) {
+    // Clear the bad cookie so the browser stops looping
+    res.clearCookie("refreshToken", refreshCookieOptions());
     throw new ApiError(401, "Invalid refresh token");
   }
 
   const user = await prisma.user.findUnique({ where: { id: decoded.id } });
   if (!user) {
+    res.clearCookie("refreshToken", refreshCookieOptions());
     throw new ApiError(401, "Invalid refresh token");
   }
 
   if (!user.refreshToken || user.refreshToken !== hashToken(refreshToken)) {
+    res.clearCookie("refreshToken", refreshCookieOptions());
     throw new ApiError(401, "Refresh token no longer valid");
   }
 

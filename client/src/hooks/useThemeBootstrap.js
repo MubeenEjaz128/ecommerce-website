@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setTheme } from "../features/ui/uiSlice";
 import { refreshToken } from "../utils/auth";
@@ -20,11 +20,19 @@ export function useThemeBootstrap() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Keep session alive after refresh via httpOnly refresh cookie
+  // Keep session alive after page refresh via httpOnly refresh cookie
+  // hasAttempted ref prevents an infinite loop: if refresh fails and sets
+  // accessToken to "", the effect would re-fire without this guard.
+  const hasAttempted = useRef(false);
   useEffect(() => {
+    if (accessToken) {
+      hasAttempted.current = false; // reset so next logout → visit works
+      return;
+    }
+    if (hasAttempted.current) return;
+    hasAttempted.current = true;
     let cancelled = false;
     (async () => {
-      if (accessToken) return;
       try {
         await refreshToken(dispatch, () => ({ ui: { accessToken: "" } }));
       } catch {
@@ -32,8 +40,6 @@ export function useThemeBootstrap() {
       }
       if (cancelled) return;
     })();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [dispatch, accessToken]);
 }
