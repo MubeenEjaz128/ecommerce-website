@@ -117,7 +117,7 @@ function AdminOrders() {
 
                 return (
                   <div
-                    key={v._id}
+                    key={v.id}
                     className={`rounded-xl border-2 bg-white shadow-sm overflow-hidden transition-all ${
                       isPending
                         ? "border-red-300 ring-1 ring-red-100"
@@ -253,7 +253,7 @@ function AdminOrders() {
                             </p>
                           )}
                           <button
-                            onClick={() => handleSendOtp(v._id)}
+                            onClick={() => handleSendOtp(v.id)}
                             disabled={isSendingOtp}
                             className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-xl cursor-pointer disabled:opacity-50"
                           >
@@ -262,14 +262,14 @@ function AdminOrders() {
                           </button>
                           <div className="flex gap-2">
                             <button
-                              onClick={() => handleAuthorizeApp(v._id)}
+                              onClick={() => handleAuthorizeApp(v.id)}
                               disabled={isAuthorizingApp}
                               className="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center transition-all cursor-pointer disabled:opacity-50"
                             >
                               {isAuthorizingApp ? "..." : "Authorize from app"}
                             </button>
                             <button
-                              onClick={() => handleResendOtp(v._id)}
+                              onClick={() => handleResendOtp(v.id)}
                               disabled={isResendingOtp}
                               className="flex-1 bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center transition-all cursor-pointer disabled:opacity-50"
                             >
