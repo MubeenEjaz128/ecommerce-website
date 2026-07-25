@@ -17,18 +17,16 @@ const brands = ["Daikin", "LG", "Samsung", "Carrier", "Voltas", "Blue Star", "Pa
 );
 
 const acImages = [
-  "https://images.pexels.com/photos/5824883/pexels-photo-5824883.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/7031606/pexels-photo-7031606.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/5824903/pexels-photo-5824903.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/4050318/pexels-photo-4050318.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
-  "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80",
-  "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
-  "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80",
-  "https://images.pexels.com/photos/1643383/pexels-photo-1643383.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800",
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&q=80",
+  "https://images.unsplash.com/photo-1718203862467-c33159fdc504?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1700124113583-81aa99ea2aa2?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1667983453881-4992fe86ab1b?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1436473849883-bb3464c23e93?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1691351582808-329cde17ffa2?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1726614846573-c1ac2e6161d1?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1651474738521-efacfb201039?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1698479603408-1a66a6d9e80f?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1665826254141-bfa10685e002?w=800&q=80&auto=format",
+  "https://images.unsplash.com/photo-1668536707718-d1b84d686091?w=800&q=80&auto=format",
 ];
 
 const productTemplates = [
