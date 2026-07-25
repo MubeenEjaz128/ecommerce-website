@@ -71,7 +71,7 @@ function Testimonials() {
             {testimonials.map((t) => (
               <div
                 key={`${groupIndex}-${t.name}`}
-                className="flex flex-col w-[320px] sm:w-[380px] border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
+                className="flex flex-col w-[260px] sm:w-[380px] border border-slate-200 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
               >
                 <div className="mb-4 flex gap-0.5 text-sky-500">
                   {[...Array(5)].map((_, idx) => (

@@ -33,9 +33,9 @@ function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
-      className="sticky top-0 z-50 border-b border-slate-200 bg-[rgb(var(--color-nav-bg))]/95 text-slate-800 backdrop-blur-md"
+      className="sticky top-0 z-50 w-full max-w-full border-b border-slate-200 bg-[rgb(var(--color-nav-bg))]/95 text-slate-800 backdrop-blur-md"
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-3 sm:px-6 lg:gap-4 lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center gap-1.5 px-2 py-2.5 sm:gap-3 sm:px-6 lg:gap-4 lg:px-8">
         {/* Mobile hamburger */}
         <button
           type="button"
@@ -43,17 +43,17 @@ function Navbar() {
             setMobileOpen((v) => !v);
             setSearchOpen(false);
           }}
-          className="flex h-11 w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 lg:hidden shrink-0"
+          className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 lg:hidden shrink-0"
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
         {/* Brand Logo */}
-        <BrandLogo size="md" theme="light" className="shrink-0" />
+        <BrandLogo size="md" theme="light" className="shrink-0 min-w-0" />
 
         {/* Right side controls */}
-        <div className="ml-auto flex items-center gap-1 sm:gap-2">
+        <div className="ml-auto flex items-center gap-0.5 sm:gap-2 shrink-0">
           {/* Desktop Navigation Links */}
           <nav className="hidden items-center gap-1 lg:flex">
             <NavLink to="/" end className={linkClass} style={{ padding: "6px 10px" }}>
@@ -81,10 +81,10 @@ function Navbar() {
               setSearchOpen((v) => !v);
               setMobileOpen(false);
             }}
-            className="flex h-11 w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 lg:hidden shrink-0"
+            className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 lg:hidden shrink-0"
             aria-label="Toggle search"
           >
-            <Search size={20} />
+            <Search size={19} />
           </button>
 
           {/* Category Dropdown on Mobile */}
@@ -100,17 +100,17 @@ function Navbar() {
           {/* Cart Link */}
           <Link
             to="/cart"
-            className="relative flex h-11 w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 shrink-0"
+            className="relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 shrink-0"
             aria-label={`Cart with ${cartItemCount} items`}
           >
-            <ShoppingCart size={22} />
+            <ShoppingCart size={20} />
             <AnimatePresence mode="wait">
               <motion.span
                 key={cartItemCount}
                 initial={{ scale: 0.6, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.6, opacity: 0 }}
-                className="absolute right-0.5 top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-sky-500 px-1 text-[11px] font-bold text-white"
+                className="absolute right-0 top-0 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-sky-500 px-1 text-[10px] sm:text-[11px] font-bold text-white"
               >
                 {cartItemCount}
               </motion.span>
@@ -120,10 +120,10 @@ function Navbar() {
           {/* User Profile Link */}
           <Link
             to={accessToken ? "/orders" : "/login"}
-            className="flex h-11 w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 shrink-0"
+            className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 shrink-0"
             aria-label="Profile"
           >
-            <User size={22} />
+            <User size={20} />
           </Link>
         </div>
       </div>

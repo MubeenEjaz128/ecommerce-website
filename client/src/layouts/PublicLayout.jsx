@@ -7,7 +7,7 @@ function PublicLayout() {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-canvas text-text transition-colors duration-300">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-canvas text-text transition-colors duration-300">
       <Navbar />
       <AnimatePresence mode="wait">
         <motion.main
@@ -16,6 +16,7 @@ function PublicLayout() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
+          className="w-full max-w-full overflow-x-hidden"
         >
           <Outlet />
         </motion.main>

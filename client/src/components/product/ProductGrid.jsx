@@ -68,13 +68,13 @@ function ProductGrid({
           </div>
 
           {showFilters && (
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+              <label className="flex flex-col gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
                 Type
                 <select
                   value={type}
                   onChange={(e) => setType(e.target.value)}
-                  className="min-w-[140px] border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500"
+                  className="w-full border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-800 outline-none focus:border-sky-500 sm:px-3 sm:py-2 sm:text-sm sm:min-w-[140px]"
                 >
                   {AC_TYPES.map((c) => (
                     <option key={c} value={c}>
@@ -84,12 +84,12 @@ function ProductGrid({
                 </select>
               </label>
 
-              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+              <label className="flex flex-col gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
                 Brand
                 <select
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  className="min-w-[140px] border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500"
+                  className="w-full border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-800 outline-none focus:border-sky-500 sm:px-3 sm:py-2 sm:text-sm sm:min-w-[140px]"
                 >
                   {brands.map((b) => (
                     <option key={b} value={b}>
@@ -99,7 +99,7 @@ function ProductGrid({
                 </select>
               </label>
 
-              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+              <label className="flex flex-col gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
                 Max price
                 <input
                   type="number"
@@ -107,16 +107,16 @@ function ProductGrid({
                   placeholder="Any"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-28 border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500"
+                  className="w-full border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-800 outline-none focus:border-sky-500 sm:w-28 sm:px-3 sm:py-2 sm:text-sm"
                 />
               </label>
 
-              <label className="flex flex-col gap-1 text-xs font-medium uppercase tracking-wide text-slate-500">
+              <label className="flex flex-col gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 sm:text-xs">
                 Sort
                 <select
                   value={sort}
                   onChange={(e) => setSort(e.target.value)}
-                  className="min-w-[140px] border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sky-500"
+                  className="w-full border border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-800 outline-none focus:border-sky-500 sm:px-3 sm:py-2 sm:text-sm sm:min-w-[140px]"
                 >
                   <option value="featured">Featured</option>
                   <option value="price-asc">Price: Low to High</option>
@@ -130,7 +130,7 @@ function ProductGrid({
       )}
 
       {isLoading ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="aspect-[4/3] animate-pulse bg-slate-200" />
           ))}
@@ -138,7 +138,7 @@ function ProductGrid({
       ) : filtered.length === 0 ? (
         <p className="py-12 text-center text-slate-500">{emptyMessage}</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
           {filtered.map((product) => (
             <ProductCard key={product._id || product.id} product={product} />
           ))}

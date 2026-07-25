@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 /** Distinct Cool Breeze mark — snowflake breeze glyph + wordmark */
 function BrandLogo({ size = "md", theme = "dark", className = "" }) {
   const sizes = {
-    sm: { box: "h-9 w-9", svg: "h-5 w-5", text: "text-xl", gap: "gap-2.5" },
-    md: { box: "h-11 w-11", svg: "h-6 w-6", text: "text-2xl", gap: "gap-3" },
-    lg: { box: "h-14 w-14", svg: "h-8 w-8", text: "text-3xl sm:text-4xl", gap: "gap-3.5" },
+    sm: { box: "h-8 w-8", svg: "h-4.5 w-4.5", text: "text-base sm:text-xl", gap: "gap-2" },
+    md: { box: "h-9 w-9 sm:h-11 sm:w-11", svg: "h-5 w-5 sm:h-6 sm:w-6", text: "text-lg sm:text-2xl", gap: "gap-2 sm:gap-3" },
+    lg: { box: "h-12 w-12 sm:h-14 sm:w-14", svg: "h-7 w-7 sm:h-8 sm:w-8", text: "text-2xl sm:text-4xl", gap: "gap-3 sm:gap-3.5" },
   };
   const s = sizes[size] || sizes.md;
   const light = theme === "light";

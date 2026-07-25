@@ -51,7 +51,7 @@ function ProductSlider({ products = [], isLoading = false }) {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: direction > 0 ? "-35%" : "35%", opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeInOut" }}
-            className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6"
+            className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4 md:gap-6"
           >
             {current.map((product) => (
               <ProductCard key={product._id || product.id} product={product} />

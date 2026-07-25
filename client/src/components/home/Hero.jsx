@@ -51,7 +51,7 @@ function Hero() {
   }, []);
 
   return (
-    <section className="relative h-[min(70vh,600px)] min-h-[400px] w-full overflow-hidden bg-sky-50">
+    <section className="relative h-[min(70vh,600px)] min-h-[380px] w-full max-w-full overflow-hidden bg-sky-50">
       <AnimatePresence mode="wait">
         <motion.div
           key={slide.id}
@@ -71,7 +71,7 @@ function Hero() {
             loading={index === 0 ? "eager" : "lazy"}
             className="h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/10 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-white/80 via-white/20 to-transparent" />
         </motion.div>
       </AnimatePresence>
 
@@ -94,41 +94,41 @@ function Hero() {
             <motion.p
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl md:text-5xl"
+              className="font-display text-xl font-extrabold tracking-tight text-slate-900 sm:text-3xl md:text-4xl"
             >
               Cool<span className="text-sky-600"> Breeze</span>
             </motion.p>
             <motion.h1
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="mt-4 max-w-xl font-display text-3xl font-bold leading-tight text-slate-800 sm:text-4xl md:text-5xl"
+              className="mt-2.5 max-w-xl font-display text-2xl font-bold leading-tight text-slate-900 sm:mt-4 sm:text-4xl md:text-5xl"
             >
               {slide.headline}
             </motion.h1>
             <motion.p
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="mt-4 max-w-md text-base text-slate-600 sm:text-lg"
+              className="mt-2.5 max-w-md text-xs leading-relaxed text-slate-600 sm:mt-4 sm:text-base md:text-lg"
             >
               {slide.subtext}
             </motion.p>
             <motion.div
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
               transition={{ duration: 0.5, ease: "easeOut" }}
-              className="mt-8"
+              className="mt-5 sm:mt-8"
             >
               <Link
                 to={slide.to}
-                className="inline-flex items-center gap-2 bg-sky-600 px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-sky-500"
+                className="inline-flex items-center gap-2 bg-sky-600 px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-sky-500 sm:px-7 sm:py-3.5 sm:text-sm"
               >
                 {slide.cta}
-                <ArrowRight size={18} />
+                <ArrowRight size={16} />
               </Link>
             </motion.div>
           </motion.div>
         </AnimatePresence>
 
-        <div className="absolute bottom-8 left-4 flex gap-2 sm:left-6 lg:left-8">
+        <div className="absolute bottom-4 left-4 flex gap-2 sm:bottom-8 sm:left-6 lg:left-8">
           {slides.map((s, i) => (
             <button
               key={s.id}

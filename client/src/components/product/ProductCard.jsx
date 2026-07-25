@@ -62,23 +62,23 @@ function ProductCard({ product }) {
         />
       </Link>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col p-2.5 sm:p-4">
         <Link to={href}>
-          <h3 className="line-clamp-2 text-sm font-medium text-slate-900 transition-colors group-hover:text-sky-700 sm:text-base">
+          <h3 className="line-clamp-2 text-xs font-medium text-slate-900 transition-colors group-hover:text-sky-700 sm:text-base">
             {product.name}
           </h3>
         </Link>
-        {tonnage && <p className="mt-1 text-xs text-slate-500">{tonnage}</p>}
+        {tonnage && <p className="mt-1 text-[11px] text-slate-500 sm:text-xs">{tonnage}</p>}
 
-        <p className="mt-2 font-display text-lg font-bold text-slate-900">${price.toFixed(2)}</p>
+        <p className="mt-1.5 font-display text-sm font-bold text-slate-900 sm:mt-2 sm:text-lg">${price.toFixed(2)}</p>
 
         <button
           type="button"
           onClick={handleAddToCart}
           disabled={isLoading}
-          className="mt-auto flex w-full items-center justify-center gap-2 bg-sky-600 px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-sky-500 disabled:opacity-60"
+          className="mt-3 flex w-full items-center justify-center gap-1.5 bg-sky-600 px-2 py-2 text-xs font-semibold text-white transition duration-200 hover:bg-sky-500 disabled:opacity-60 sm:mt-auto sm:px-3 sm:py-2.5 sm:text-sm"
         >
-          <ShoppingCart size={16} />
+          <ShoppingCart size={14} className="sm:h-4 sm:w-4" />
           {isLoading ? "Adding..." : "Add to Cart"}
         </button>
       </div>

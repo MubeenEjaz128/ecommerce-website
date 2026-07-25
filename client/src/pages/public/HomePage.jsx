@@ -24,10 +24,10 @@ function HomePage() {
   const hotSelling = (hot.length ? hot : [...allProducts].reverse()).slice(0, 8);
 
   return (
-    <div className="bg-sky-50/60">
+    <div className="w-full max-w-full overflow-hidden bg-sky-50/60">
       <Hero />
 
-      <div className="mx-auto max-w-7xl space-y-20 px-4 py-16 sm:px-6 lg:px-8 lg:space-y-24 lg:py-20">
+      <div className="mx-auto max-w-7xl space-y-12 px-3 py-10 sm:px-6 sm:py-16 sm:space-y-20 lg:px-8 lg:space-y-24 lg:py-20">
         <motion.section
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
