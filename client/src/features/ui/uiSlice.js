@@ -23,6 +23,7 @@ const uiSlice = createSlice({
       state.accessToken = token;
       if (token) {
         localStorage.setItem("accessToken", token);
+        localStorage.setItem("hasSession", "true");
       } else {
         localStorage.removeItem("accessToken");
       }

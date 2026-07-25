@@ -21,22 +21,36 @@ export function useThemeBootstrap() {
   }, [theme]);
 
   // Keep session alive after page refresh via httpOnly refresh cookie
-  // hasAttempted ref prevents an infinite loop: if refresh fails and sets
-  // accessToken to "", the effect would re-fire without this guard.
+  // Soft signal check (hasSession hint) avoids unnecessary 401 network logs for first-time guest visitors
   const hasAttempted = useRef(false);
   useEffect(() => {
     if (accessToken) {
-      hasAttempted.current = false; // reset so next logout → visit works
+      hasAttempted.current = false;
       return;
     }
     if (hasAttempted.current) return;
+
+    // Check soft signal hints in localStorage
+    const hasSessionHint = localStorage.getItem("hasSession") === "true";
+    const hasStoredToken = Boolean(localStorage.getItem("accessToken"));
+    
+    // If user has never logged in on this browser (pure guest), skip background refresh call
+    if (!hasSessionHint && !hasStoredToken) {
+      return;
+    }
+
     hasAttempted.current = true;
     let cancelled = false;
     (async () => {
       try {
-        await refreshToken(dispatch, () => ({ ui: { accessToken: "" } }));
+        const result = await refreshToken(dispatch, () => ({ ui: { accessToken: "" } }));
+        if (!result) {
+          localStorage.removeItem("hasSession");
+          localStorage.removeItem("accessToken");
+        }
       } catch {
-        // No valid refresh session — guest browsing is fine
+        localStorage.removeItem("hasSession");
+        localStorage.removeItem("accessToken");
       }
       if (cancelled) return;
     })();
