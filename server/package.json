@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
+    "build": "prisma generate",
     "seed": "node src/seed/seed.js",
     "lint": "eslint \"src/**/*.js\" \"server.js\"",
     "lint:fix": "eslint \"src/**/*.js\" \"server.js\" --fix"
