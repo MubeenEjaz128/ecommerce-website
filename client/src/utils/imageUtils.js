@@ -12,10 +12,12 @@
 export function getOptimizedImageUrl(url, { width, height, quality = 75, format = "auto" } = {}) {
   if (!url || typeof url !== "string") return url;
 
+  const URLCtor = typeof window !== "undefined" && window.URL ? window.URL : globalThis.URL;
+
   // Unsplash URLs
-  if (url.includes("images.unsplash.com")) {
+  if (url.includes("images.unsplash.com") && URLCtor) {
     try {
-      const parsed = new URL(url);
+      const parsed = new URLCtor(url);
       if (width) parsed.searchParams.set("w", String(width));
       if (height) parsed.searchParams.set("h", String(height));
       parsed.searchParams.set("q", String(quality));
@@ -28,9 +30,9 @@ export function getOptimizedImageUrl(url, { width, height, quality = 75, format 
   }
 
   // Pexels URLs
-  if (url.includes("images.pexels.com")) {
+  if (url.includes("images.pexels.com") && URLCtor) {
     try {
-      const parsed = new URL(url);
+      const parsed = new URLCtor(url);
       if (width) parsed.searchParams.set("w", String(width));
       if (height) parsed.searchParams.set("h", String(height));
       parsed.searchParams.set("auto", "compress");

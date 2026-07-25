@@ -1,3 +1,7 @@
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 const slides = [
