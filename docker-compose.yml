@@ -1,19 +1,24 @@
 version: '3.8'
 services:
-  mongo:
-    image: mongo:6.0
+  mysql:
+    image: mysql:8.0
     restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=ecommerce
+      - MYSQL_USER=ecommerce_user
+      - MYSQL_PASSWORD=ecommerce_pass
     volumes:
-      - mongo-data:/data/db
+      - mysql-data:/var/lib/mysql
     ports:
-      - "27017:27017"
+      - "3306:3306"
 
   server:
     build:
       context: .
       dockerfile: Dockerfile.server
     environment:
-      - MONGO_URI=mongodb://mongo:27017/ecommerce
+      - DATABASE_URL=mysql://ecommerce_user:ecommerce_pass@mysql:3306/ecommerce
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
       - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
@@ -24,7 +29,7 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - mongo
+      - mysql
 
   client:
     build:
@@ -38,4 +43,4 @@ services:
       - server
 
 volumes:
-  mongo-data:
+  mysql-data:

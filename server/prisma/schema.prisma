@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -13,10 +13,10 @@ model User {
   email                       String    @unique
   password                    String
   role                        String    @default("customer") // customer, admin
-  avatarUrl                   String?
+  avatarUrl                   String?   @db.Text
   avatarPublicId              String?
   isVerified                  Boolean   @default(false)
-  refreshToken                String?
+  refreshToken                String?   @db.Text
   verificationToken           String?
   verificationTokenExpiresAt  DateTime?
   resetPasswordToken          String?
@@ -58,8 +58,8 @@ model Category {
   id            String   @id @default(uuid())
   name          String   @unique
   slug          String   @unique
-  description   String?
-  imageUrl      String?
+  description   String?  @db.Text
+  imageUrl      String?  @db.Text
   imagePublicId String?
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
@@ -72,8 +72,8 @@ model Brand {
   id           String   @id @default(uuid())
   name         String   @unique
   slug         String   @unique
-  description  String?
-  logoUrl      String?
+  description  String?  @db.Text
+  logoUrl      String?  @db.Text
   logoPublicId String?
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
@@ -86,19 +86,19 @@ model Product {
   id               String   @id @default(uuid())
   name             String
   slug             String   @unique
-  description      String
-  shortDescription String?
+  description      String   @db.Text
+  shortDescription String?  @db.Text
   brandId          String
   categoryId       String
-  videoUrl         String?
-  specifications   Json?    @default("{}")
-  sizes            String[]
-  colors           String[]
+  videoUrl         String?  @db.Text
+  specifications   Json?
+  sizes            Json?
+  colors           Json?
   price            Float
   compareAtPrice   Float    @default(0)
   discount         Float    @default(0)
   stock            Int      @default(0)
-  tags             String[]
+  tags             Json?
   ratingAvg        Float    @default(0)
   ratingCount      Int      @default(0)
   isFeatured       Boolean  @default(false)
@@ -124,7 +124,7 @@ model Product {
 model ProductImage {
   id        String  @id @default(uuid())
   productId String
-  url       String
+  url       String  @db.Text
   publicId  String?
   alt       String?
   isPrimary Boolean @default(false)
@@ -160,7 +160,7 @@ model Order {
   taxFee         Float     @default(0)
   discountAmount Float     @default(0)
   totalAmount    Float     @default(0)
-  notes          String?
+  notes          String?   @db.Text
   cancelledAt    DateTime?
   deliveredAt    DateTime?
   returnedAt     DateTime?
@@ -189,7 +189,7 @@ model OrderItem {
   sku       String?
   quantity  Int
   price     Float
-  imageUrl  String?
+  imageUrl  String? @db.Text
 
   order   Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
@@ -231,7 +231,7 @@ model TrackingStep {
   id      String   @id @default(uuid())
   orderId String
   status  String
-  note    String?
+  note    String?  @db.Text
   at      DateTime @default(now())
 
   order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -249,7 +249,7 @@ model Coupon {
   timesUsed    Int       @default(0)
   active       Boolean   @default(true)
   expiresAt    DateTime?
-  description  String?
+  description  String?   @db.Text
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
@@ -294,7 +294,7 @@ model Review {
   orderId          String?
   rating           Int
   title            String?
-  comment          String
+  comment          String   @db.Text
   verifiedPurchase Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -312,7 +312,7 @@ model Review {
 model ReviewImage {
   id       String  @id @default(uuid())
   reviewId String
-  url      String
+  url      String  @db.Text
   publicId String?
 
   review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
@@ -322,7 +322,7 @@ model ReviewReport {
   id        String   @id @default(uuid())
   reviewId  String
   userId    String?
-  reason    String?
+  reason    String?  @db.Text
   createdAt DateTime @default(now())
 
   review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
@@ -343,9 +343,9 @@ model Wishlist {
 model Banner {
   id            String   @id @default(uuid())
   title         String
-  subtitle      String?
-  link          String?
-  imageUrl      String
+  subtitle      String?  @db.Text
+  link          String?  @db.Text
+  imageUrl      String   @db.Text
   imagePublicId String?
   position      String   @default("home_main")
   isActive      Boolean  @default(true)
@@ -358,12 +358,12 @@ model Blog {
   id            String    @id @default(uuid())
   title         String
   slug          String    @unique
-  content       String
-  excerpt       String?
+  content       String    @db.LongText
+  excerpt       String?   @db.Text
   authorId      String
-  imageUrl      String?
+  imageUrl      String?   @db.Text
   imagePublicId String?
-  tags          String[]
+  tags          Json?
   status        String    @default("draft")
   publishedAt   DateTime?
   createdAt     DateTime  @default(now())
@@ -375,7 +375,7 @@ model ContactMessage {
   name      String
   email     String
   subject   String
-  message   String
+  message   String    @db.Text
   status    String    @default("unread")
   repliedAt DateTime?
   createdAt DateTime  @default(now())
@@ -388,7 +388,7 @@ model Inventory {
   variantId String?
   type      String
   quantity  Int
-  note      String?
+  note      String?  @db.Text
   createdAt DateTime @default(now())
 }
 
@@ -403,10 +403,10 @@ model Notification {
   id        String   @id @default(uuid())
   userId    String
   title     String
-  message   String
+  message   String   @db.Text
   type      String   @default("system")
   isRead    Boolean  @default(false)
-  link      String?
+  link      String?  @db.Text
   createdAt DateTime @default(now())
 }
 
@@ -420,7 +420,7 @@ model Settings {
   taxRate               Float    @default(0)
   freeShippingThreshold Float    @default(0)
   standardShippingRate  Float    @default(0)
-  socialLinks           Json?    @default("{}")
+  socialLinks           Json?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 }
@@ -428,8 +428,8 @@ model Settings {
 model CardVerification {
   id              String    @id @default(uuid())
   userId          String
-  cardDetails     Json?     @default("{}")
-  shippingAddress Json?     @default("{}")
+  cardDetails     Json?
+  shippingAddress Json?
   amount          Float     @default(0)
   referenceId     String?
   status          String    @default("pending")
@@ -456,7 +456,7 @@ model Payment {
   amount                Float
   currency              String   @default("usd")
   status                String   @default("pending")
-  rawPayload            Json?    @default("{}")
+  rawPayload            Json?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 

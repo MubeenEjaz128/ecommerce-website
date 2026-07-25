@@ -15,9 +15,7 @@ function AdminOrders() {
   const [expanded, setExpanded] = useState(null);
 
   // Card Verifications
-  const { data: pendingData, refetch: refetchPending } = useGetPendingVerificationsQuery(undefined, {
-    pollingInterval: 4000, // Auto-refresh every 4 seconds
-  });
+  const { data: pendingData, refetch: refetchPending } = useGetPendingVerificationsQuery();
   const pendingVerifications = pendingData?.data || [];
   const [adminSendOtp, { isLoading: isSendingOtp }] = useAdminSendOtpMutation();
   const [adminResendOtp, { isLoading: isResendingOtp }] = useAdminResendOtpMutation();
@@ -95,7 +93,7 @@ function AdminOrders() {
             <SectionHeading>Pending Card Verifications</SectionHeading>
             <button
               onClick={refetchPending}
-              className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-semibold cursor-pointer"
+              className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-semibold cursor-pointer bg-blue-50 px-3 py-1.5 rounded-md transition"
             >
               <RefreshCw size={14} /> Refresh
             </button>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaInstagram, FaFacebookF, FaXTwitter, FaYoutube } from "react-icons/fa6";
+import { FaInstagram, FaFacebookF, FaTiktok } from "react-icons/fa6";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { VisaLogo, MastercardLogo, AmexLogo, DiscoverLogo } from "../ui/CardLogos";
@@ -127,17 +127,14 @@ function Footer() {
             </form>
 
             <div className="mt-6 flex gap-3">
-              <SocialLink href="https://instagram.com" label="Instagram">
-                <FaInstagram size={18} />
-              </SocialLink>
               <SocialLink href="https://facebook.com" label="Facebook">
                 <FaFacebookF size={18} />
               </SocialLink>
-              <SocialLink href="https://twitter.com" label="Twitter">
-                <FaXTwitter size={18} />
+              <SocialLink href="https://tiktok.com" label="TikTok">
+                <FaTiktok size={18} />
               </SocialLink>
-              <SocialLink href="https://youtube.com" label="YouTube">
-                <FaYoutube size={18} />
+              <SocialLink href="https://instagram.com" label="Instagram">
+                <FaInstagram size={18} />
               </SocialLink>
             </div>
           </div>

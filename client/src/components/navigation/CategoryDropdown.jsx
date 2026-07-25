@@ -5,28 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const menuSections = [
   {
-    title: "Trending",
+    title: "Shop By Category",
     links: [
-      { label: "Best Sellers", to: "/shop?sort=best" },
-      { label: "New Releases", to: "/shop?sort=new" },
-      { label: "Movers & Shakers", to: "/shop?sort=trending" },
-    ],
-  },
-  {
-    title: "Shop By Department",
-    links: [
-      { label: "Sale", to: "/shop?onSale=true" },
       { label: "Split ACs", to: "/shop?category=Split%20ACs" },
       { label: "Window ACs", to: "/shop?category=Window%20ACs" },
       { label: "Portable ACs", to: "/shop?category=Portable%20ACs" },
+      { label: "Inverter ACs", to: "/shop?category=Inverter%20ACs" },
       { label: "Air Coolers", to: "/shop?category=Air%20Coolers" },
-    ],
-  },
-  {
-    title: "Help & Settings",
-    links: [
-      { label: "Your Account", to: "/account" },
-      { label: "Customer Service", to: "/contact" },
     ],
   },
 ];

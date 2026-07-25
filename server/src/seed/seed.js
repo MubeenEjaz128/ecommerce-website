@@ -109,6 +109,7 @@ async function seedDatabase() {
         energyRating: template.energy,
         coverage: template.coverage,
       },
+      sizes: [],
       colors: ["White", "Silver"],
       variants: {
         create: [

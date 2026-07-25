@@ -185,8 +185,8 @@ const getAllOrders = asyncHandler(async (req, res) => {
   if (user) where.userId = user;
   if (q) {
     where.OR = [
-      { orderNumber: { contains: q, mode: "insensitive" } },
-      { user: { email: { contains: q, mode: "insensitive" } } }
+      { orderNumber: { contains: q } },
+      { user: { email: { contains: q } } }
     ];
   }
 

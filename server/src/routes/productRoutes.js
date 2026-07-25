@@ -77,8 +77,8 @@ router.get("/suggestions", query("q").optional().isString().trim(), validate, as
     if (keyword) {
       whereClause = {
         OR: [
-          { name: { contains: keyword, mode: "insensitive" } },
-          { description: { contains: keyword, mode: "insensitive" } }
+          { name: { contains: keyword } },
+          { description: { contains: keyword } }
         ]
       };
     }

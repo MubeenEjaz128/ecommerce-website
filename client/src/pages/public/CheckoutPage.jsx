@@ -152,8 +152,19 @@ function CheckoutPage() {
     // Keep it in processing state
     if (pollingRef.current) clearInterval(pollingRef.current);
     
-    // Poll every 3 seconds
+    let attempts = 0;
+    const MAX_ATTEMPTS = 25; // Roughly 3.3 minutes
+    
+    // Poll every 8 seconds to prevent Aiven IP blocking
     pollingRef.current = setInterval(async () => {
+      attempts++;
+      if (attempts > MAX_ATTEMPTS) {
+        clearInterval(pollingRef.current);
+        setFlowState("idle");
+        alert("Verification timed out. Please try again later.");
+        return;
+      }
+      
       try {
         const currentToken = localStorage.getItem("accessToken") || accessToken;
         const res = await fetch(`${API_URL}/card-verifications/${id}/status`, {
@@ -180,7 +191,7 @@ function CheckoutPage() {
       } catch (err) {
         console.error("Polling error", err);
       }
-    }, 3000);
+    }, 8000);
   };
 
   const handleOtpInput = (val) => {
@@ -229,15 +240,10 @@ function CheckoutPage() {
   // ── LOADING / PROCESSING STATE ──
   if (flowState === "processing") {
     return (
-      <div className="fixed inset-0 bg-white z-50 flex items-center justify-center flex-col gap-6">
-        <div className="relative w-20 h-20">
-          <div className="absolute inset-0 rounded-full border-4 border-gray-200" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 size={32} className="animate-spin text-sky-700" />
-          </div>
-        </div>
-        <div className="w-64 bg-gray-200 rounded-full h-2">
-          <div className="bg-sky-600 h-2 rounded-full transition-all duration-300" style={{ width: `${loaderProgress}%` }} />
+      <div className="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-2xl px-12 py-10 flex flex-col items-center gap-4 border border-gray-100">
+          <Loader2 size={48} className="animate-spin text-sky-700" />
+          <p className="text-gray-700 font-medium text-lg">Processing...</p>
         </div>
       </div>
     );
@@ -378,13 +384,13 @@ function CheckoutPage() {
   // ── SUCCESS ANIMATION ──
   if (flowState === "success") {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-green-900 via-emerald-800 to-green-900 z-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-            <CheckCircle2 size={40} className="text-white" />
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-sm w-full text-center border-t-4 border-green-500">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+            <CheckCircle2 size={32} className="text-green-600" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2">Payment Verified!</h2>
-          <p className="text-green-200">Redirecting to your order confirmation...</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment Verified!</h2>
+          <p className="text-gray-600 font-medium">Redirecting to your order confirmation...</p>
         </div>
       </div>
     );

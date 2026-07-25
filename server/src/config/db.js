@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 async function connectDB() {
   try {
     await prisma.$connect();
-    console.log("PostgreSQL connected via Prisma");
+    console.log("MySQL connected via Prisma");
   } catch (error) {
     console.error("Database connection failed:", error.message);
     process.exit(1);

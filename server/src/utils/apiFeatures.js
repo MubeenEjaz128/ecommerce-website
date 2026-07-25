@@ -11,7 +11,7 @@ class PrismaApiFeatures {
     const { keyword } = this.queryString;
     if (keyword) {
       this.args.where.OR = fields.map((field) => ({
-        [field]: { contains: keyword, mode: "insensitive" }
+        [field]: { contains: keyword }
       }));
     }
     return this;
