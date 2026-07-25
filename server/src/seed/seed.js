@@ -41,6 +41,12 @@ const productTemplates = [
 ];
 
 async function seedDatabase() {
+  // Wipe related records first
+  await prisma.cartItem.deleteMany({});
+  await prisma.orderItem.deleteMany({});
+  await prisma.order.deleteMany({});
+  await prisma.cardVerification.deleteMany({});
+  
   await prisma.product.deleteMany({});
   await prisma.brand.deleteMany({});
   await prisma.category.deleteMany({});

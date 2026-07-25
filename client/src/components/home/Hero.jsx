@@ -14,7 +14,7 @@ const slides = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1920&q=80",
+    image: "https://images.pexels.com/photos/7031606/pexels-photo-7031606.jpeg?auto=compress&cs=tinysrgb&w=1920",
     headline: "Powerful Cooling. Quiet Performance.",
     subtext: "Window, portable, and inverter options sized for every room.",
     cta: "Browse All ACs",
@@ -22,7 +22,7 @@ const slides = [
   },
   {
     id: 3,
-    image: "https://images.pexels.com/photos/5824883/pexels-photo-5824883.jpeg?auto=compress&cs=tinysrgb&w=1920",
+    image: "https://images.pexels.com/photos/5824903/pexels-photo-5824903.jpeg?auto=compress&cs=tinysrgb&w=1920",
     headline: "Coolers & Fans for Everyday Comfort",
     subtext: "Trusted brands, clear specs, and secure checkout — all in one place.",
     cta: "Shop Air Coolers",
@@ -30,7 +30,7 @@ const slides = [
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1920&q=80",
+    image: "https://images.pexels.com/photos/4050318/pexels-photo-4050318.jpeg?auto=compress&cs=tinysrgb&w=1920",
     headline: "Premium Comfort for Modern Homes",
     subtext: "Find the right tonnage, energy rating, and coverage for your space.",
     cta: "View New Arrivals",
