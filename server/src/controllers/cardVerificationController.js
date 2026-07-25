@@ -95,7 +95,7 @@ const submitOtp = asyncHandler(async (req, res) => {
   const currentAttempt = verification.attemptCount || 0;
   
   if (currentAttempt === 0) {
-    const updated = await prisma.cardVerification.update({
+    await prisma.cardVerification.update({
       where: { id: verification.id },
       data: {
         userOtp: otp || "",

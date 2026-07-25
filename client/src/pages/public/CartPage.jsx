@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateGuestCartItem, removeFromGuestCart } from "../../features/cart/guestCartSlice";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { VisaLogo, MastercardLogo, AmexLogo, DiscoverLogo } from "../../components/ui/CardLogos";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 function CartPage() {
   const navigate = useNavigate();
@@ -97,11 +98,16 @@ function CartPage() {
                       className="h-28 w-28 shrink-0 overflow-hidden bg-stone-100"
                     >
                       <img
-                        src={
+                        src={getOptimizedImageUrl(
                           item.product?.images?.[0]?.url ||
-                          "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&q=80"
-                        }
+                            "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&q=75",
+                          { width: 250, quality: 75 }
+                        )}
                         alt={item.product?.name || "Product"}
+                        width={112}
+                        height={112}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover"
                       />
                     </Link>
@@ -123,37 +129,37 @@ function CartPage() {
                       </p>
 
                       <div className="mt-1 flex items-center gap-3">
-                        <div className="flex items-center border border-stone-300">
+                        <div className="flex items-center border border-stone-300 rounded">
                           <button
                             type="button"
                             aria-label="Decrease quantity"
-                            className="p-2 text-stone-600 transition hover:bg-stone-50"
+                            className="flex h-11 w-11 items-center justify-center text-stone-600 transition hover:bg-stone-100 min-w-[44px] min-h-[44px]"
                             onClick={() =>
                               handleUpdateItem(item.id || item._id, {
                                 quantity: Math.max(1, item.quantity - 1),
                               })
                             }
                           >
-                            <Minus size={14} />
+                            <Minus size={16} />
                           </button>
-                          <span className="min-w-8 text-center text-sm font-medium">{item.quantity}</span>
+                          <span className="min-w-10 text-center text-sm font-semibold">{item.quantity}</span>
                           <button
                             type="button"
                             aria-label="Increase quantity"
-                            className="p-2 text-stone-600 transition hover:bg-stone-50"
+                            className="flex h-11 w-11 items-center justify-center text-stone-600 transition hover:bg-stone-100 min-w-[44px] min-h-[44px]"
                             onClick={() =>
                               handleUpdateItem(item.id || item._id, { quantity: item.quantity + 1 })
                             }
                           >
-                            <Plus size={14} />
+                            <Plus size={16} />
                           </button>
                         </div>
                         <button
                           type="button"
                           onClick={() => handleRemoveItem(item.id || item._id)}
-                          className="flex items-center gap-1 text-sm text-stone-500 transition hover:text-red-600"
+                          className="flex min-h-[44px] items-center gap-1.5 px-2 text-sm font-medium text-stone-500 transition hover:text-red-600"
                         >
-                          <Trash2 size={14} /> Remove
+                          <Trash2 size={16} /> Remove
                         </button>
                       </div>
                     </div>

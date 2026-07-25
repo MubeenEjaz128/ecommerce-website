@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ProductCard from "../../components/product/ProductCard";
 import { useGetProductsQuery } from "../../features/api/apiSlice";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 function CollectionPage() {
   const { data, isLoading } = useGetProductsQuery("limit=16");
@@ -11,8 +12,12 @@ function CollectionPage() {
     <div className="min-h-screen bg-stone-50">
       <section className="relative h-[42vh] min-h-[320px] w-full overflow-hidden bg-stone-900">
         <img
-          src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1920&q=80"
-          alt=""
+          src={getOptimizedImageUrl("https://images.unsplash.com/photo-1584622650111-993a426fbf0a", { width: 1200, quality: 75 })}
+          alt="Collection Header"
+          width={1200}
+          height={400}
+          fetchPriority="high"
+          decoding="async"
           className="h-full w-full object-cover opacity-70"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-stone-950/30 to-transparent" />

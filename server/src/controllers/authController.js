@@ -131,7 +131,7 @@ const refresh = asyncHandler(async (req, res) => {
   let decoded;
   try {
     decoded = jwt.verify(refreshToken, env.jwtRefreshSecret);
-  } catch (error) {
+  } catch {
     // Clear the bad cookie so the browser stops looping
     res.clearCookie("refreshToken", refreshCookieOptions());
     throw new ApiError(401, "Invalid refresh token");

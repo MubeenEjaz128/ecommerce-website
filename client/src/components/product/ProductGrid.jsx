@@ -130,7 +130,7 @@ function ProductGrid({
       )}
 
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="aspect-[4/3] animate-pulse bg-slate-200" />
           ))}
@@ -138,7 +138,7 @@ function ProductGrid({
       ) : filtered.length === 0 ? (
         <p className="py-12 text-center text-slate-500">{emptyMessage}</p>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
           {filtered.map((product) => (
             <ProductCard key={product._id || product.id} product={product} />
           ))}

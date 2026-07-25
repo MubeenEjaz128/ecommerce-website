@@ -5,9 +5,10 @@ import { toast } from "react-toastify";
 import { useAddCartItemMutation } from "../../features/api/apiSlice";
 import { addToGuestCart } from "../../features/cart/guestCartSlice";
 import { motion } from "framer-motion";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 const AC_FALLBACK =
-  "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=80";
+  "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&q=75";
 
 function ProductCard({ product }) {
   const dispatch = useDispatch();
@@ -31,7 +32,8 @@ function ProductCard({ product }) {
     }
   };
 
-  const image = product.images?.[0]?.url || product.image || AC_FALLBACK;
+  const rawImage = product.images?.[0]?.url || product.image || AC_FALLBACK;
+  const image = getOptimizedImageUrl(rawImage, { width: 400, quality: 75 });
   const price = Number(product.price || product.effectivePrice || 0);
   const href = `/products/${product.slug || product._id || product.id}`;
   const tonnage =
@@ -52,6 +54,10 @@ function ProductCard({ product }) {
         <img
           src={image}
           alt={product.name}
+          width={400}
+          height={300}
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </Link>

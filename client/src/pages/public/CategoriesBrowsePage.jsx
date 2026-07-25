@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useGetCategoriesQuery } from "../../features/api/apiSlice";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 const fallbackCategories = [
   {
@@ -76,8 +77,12 @@ function CategoriesPage() {
                   className="group relative block aspect-[4/3] overflow-hidden bg-stone-900"
                 >
                   <img
-                    src={cat.image}
+                    src={getOptimizedImageUrl(cat.image, { width: 600, quality: 75 })}
                     alt={cat.name}
+                    width={600}
+                    height={450}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover opacity-80 transition duration-500 group-hover:scale-105 group-hover:opacity-90"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent" />

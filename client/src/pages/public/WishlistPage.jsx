@@ -3,6 +3,7 @@ import { useGetWishlistQuery, useRemoveWishlistItemMutation, useAddCartItemMutat
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import ProductCard from "../../components/product/ProductCard";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 function WishlistPage() {
   const { accessToken } = useSelector((state) => state.ui);
@@ -57,7 +58,19 @@ function WishlistPage() {
             {products.map((product) => (
               <div key={product.id || product._id} className="flex flex-col border border-gray-200 rounded-lg overflow-hidden p-4 group">
                 <Link to={`/products/${product.slug || product.id}`} className="block relative aspect-square bg-gray-50 overflow-hidden mb-4">
-                  <img src={product.images?.[0]?.url || "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80"} alt={product.name} className="object-contain w-full h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-300" />
+                  <img
+                    src={getOptimizedImageUrl(
+                      product.images?.[0]?.url ||
+                        "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&q=75",
+                      { width: 400, quality: 75 }
+                    )}
+                    alt={product.name}
+                    width={300}
+                    height={300}
+                    loading="lazy"
+                    decoding="async"
+                    className="object-contain w-full h-full mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+                  />
                 </Link>
                 <Link to={`/products/${product.slug || product.id}`}>
                   <h3 className="text-sm font-medium text-gray-900 line-clamp-2 hover:text-[#C7511F] hover:underline">{product.name}</h3>

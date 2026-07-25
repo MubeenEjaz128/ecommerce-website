@@ -11,8 +11,9 @@ import {
 } from "../../features/api/apiSlice";
 import { addToGuestCart } from "../../features/cart/guestCartSlice";
 import ProductCard from "../../components/product/ProductCard";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
-const AC_FALLBACK = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=80";
+const AC_FALLBACK = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=75";
 
 function getSpec(product, keys) {
   const specs = product.specifications;
@@ -133,14 +134,26 @@ function ProductDetailsPage() {
                   activeImageIndex === idx ? "border-sky-600" : "border-slate-200"
                 }`}
               >
-                <img src={img.url} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={getOptimizedImageUrl(img.url, { width: 150, quality: 75 })}
+                  alt=""
+                  width={64}
+                  height={64}
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
               </button>
             ))}
           </div>
           <div className="aspect-[4/3] flex-1 overflow-hidden bg-white">
             <img
-              src={images[activeImageIndex].url}
+              src={getOptimizedImageUrl(images[activeImageIndex].url, { width: 800, quality: 80 })}
               alt={product.name}
+              width={800}
+              height={600}
+              fetchPriority="high"
+              decoding="async"
               className="h-full w-full object-cover"
             />
           </div>
@@ -257,7 +270,7 @@ function ProductDetailsPage() {
       {relatedProducts.length > 0 && (
         <div className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="font-display text-2xl font-bold text-slate-900">Related cooling products</h2>
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6 md:gap-5">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 md:gap-5">
             {relatedProducts.slice(0, 6).map((prod) => (
               <ProductCard key={prod._id || prod.id} product={prod} />
             ))}

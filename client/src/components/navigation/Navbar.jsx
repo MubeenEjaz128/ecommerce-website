@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart, Menu, User, X } from "lucide-react";
+import { ShoppingCart, Menu, User, X, Search } from "lucide-react";
 import { useSelector } from "react-redux";
 import { useGetCartQuery } from "../../features/api/apiSlice";
 import SearchBar from "./SearchBar";
@@ -9,16 +9,11 @@ import CategoryDropdown from "./CategoryDropdown";
 import LanguageDropdown from "./LanguageDropdown";
 import BrandLogo from "./BrandLogo";
 
-const navLinks = [
-  { to: "/", label: "Home", end: true },
-  { to: "/contact", label: "Contact Us" },
-  { to: "/about", label: "About Us" },
-];
-
 function Navbar() {
   const { accessToken } = useSelector((state) => state.ui);
   const guestCartItems = useSelector((state) => state.guestCart.items);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const { data: cartData } = useGetCartQuery(undefined, { skip: !accessToken });
 
@@ -40,12 +35,15 @@ function Navbar() {
       transition={{ type: "spring", stiffness: 100, damping: 20 }}
       className="sticky top-0 z-50 border-b border-slate-200 bg-[rgb(var(--color-nav-bg))]/95 text-slate-800 backdrop-blur-md"
     >
-      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3.5 sm:px-6 lg:gap-4 lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center gap-2 px-3 py-3 sm:px-6 lg:gap-4 lg:px-8">
         {/* Mobile hamburger */}
         <button
           type="button"
-          onClick={() => setMobileOpen((v) => !v)}
-          className="rounded-md p-2 text-slate-700 transition hover:bg-slate-100 lg:hidden"
+          onClick={() => {
+            setMobileOpen((v) => !v);
+            setSearchOpen(false);
+          }}
+          className="flex h-11 w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 lg:hidden shrink-0"
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X size={22} /> : <Menu size={22} />}
@@ -54,15 +52,14 @@ function Navbar() {
         {/* Brand Logo */}
         <BrandLogo size="md" theme="light" className="shrink-0" />
 
-        {/* Right side: nav links + All dropdown + search + icons */}
+        {/* Right side controls */}
         <div className="ml-auto flex items-center gap-1 sm:gap-2">
-          {/* Desktop nav links */}
+          {/* Desktop Navigation Links */}
           <nav className="hidden items-center gap-1 lg:flex">
             <NavLink to="/" end className={linkClass} style={{ padding: "6px 10px" }}>
               Home
             </NavLink>
             <CategoryDropdown />
-
             <NavLink to="/about" className={linkClass} style={{ padding: "6px 10px" }}>
               About Us
             </NavLink>
@@ -72,22 +69,38 @@ function Navbar() {
             <LanguageDropdown />
           </nav>
 
-          {/* Compact search bar */}
+          {/* Desktop Search Bar */}
           <div className="hidden lg:flex">
-            <SearchBar compact />
+            <SearchBar />
           </div>
 
-          {/* Mobile search + All */}
-          <div className="flex items-center gap-1 lg:hidden">
+          {/* Mobile Search Toggle Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setSearchOpen((v) => !v);
+              setMobileOpen(false);
+            }}
+            className="flex h-11 w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 lg:hidden shrink-0"
+            aria-label="Toggle search"
+          >
+            <Search size={20} />
+          </button>
+
+          {/* Category Dropdown on Mobile */}
+          <div className="hidden sm:block lg:hidden">
             <CategoryDropdown />
-            <LanguageDropdown />
-            <SearchBar compact />
           </div>
 
-          {/* Cart */}
+          {/* Language Dropdown */}
+          <div className="hidden sm:block lg:hidden">
+            <LanguageDropdown />
+          </div>
+
+          {/* Cart Link */}
           <Link
             to="/cart"
-            className="relative flex items-center justify-center rounded-md p-2 text-slate-700 transition hover:bg-slate-100"
+            className="relative flex h-11 w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 shrink-0"
             aria-label={`Cart with ${cartItemCount} items`}
           >
             <ShoppingCart size={22} />
@@ -97,17 +110,17 @@ function Navbar() {
                 initial={{ scale: 0.6, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.6, opacity: 0 }}
-                className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-sky-500 px-1 text-[11px] font-bold text-white"
+                className="absolute right-0.5 top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-sky-500 px-1 text-[11px] font-bold text-white"
               >
                 {cartItemCount}
               </motion.span>
             </AnimatePresence>
           </Link>
 
-          {/* User / Account */}
+          {/* User Profile Link */}
           <Link
             to={accessToken ? "/orders" : "/login"}
-            className="flex items-center justify-center rounded-md p-2 text-slate-700 transition hover:bg-slate-100"
+            className="flex h-11 w-11 items-center justify-center rounded-md text-slate-700 transition hover:bg-slate-100 shrink-0"
             aria-label="Profile"
           >
             <User size={22} />
@@ -115,15 +128,31 @@ function Navbar() {
         </div>
       </div>
 
+      {/* Mobile Search Overlay Bar */}
+      <AnimatePresence>
+        {searchOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden border-t border-slate-200 bg-slate-50 px-4 py-3 lg:hidden"
+          >
+            <SearchBar compact onClose={() => setSearchOpen(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Hamburger Nav Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-white/10 lg:hidden"
+            className="overflow-hidden border-t border-slate-200 bg-white shadow-md lg:hidden"
           >
-            <div className="flex flex-col gap-1 px-4 py-3 bg-white border-b border-slate-200 shadow-sm">
+            <div className="flex flex-col gap-1 px-4 py-3">
               <NavLink
                 to="/"
                 end
@@ -136,6 +165,9 @@ function Navbar() {
               >
                 Home
               </NavLink>
+              <div className="py-1">
+                <CategoryDropdown />
+              </div>
               <NavLink
                 to="/about"
                 onClick={() => setMobileOpen(false)}
@@ -158,6 +190,10 @@ function Navbar() {
               >
                 Contact Us
               </NavLink>
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between px-3">
+                <span className="text-xs font-semibold text-slate-500 uppercase">Language</span>
+                <LanguageDropdown />
+              </div>
             </div>
           </motion.nav>
         )}

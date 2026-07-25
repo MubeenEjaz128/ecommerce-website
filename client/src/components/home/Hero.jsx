@@ -1,12 +1,9 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 const slides = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1718203862467-c33159fdc504?w=1920&q=80&auto=format",
+    image: "https://images.unsplash.com/photo-1718203862467-c33159fdc504?w=1200&q=75&auto=format",
     headline: "Stay Cool When It Matters Most",
     subtext: "Energy-efficient Split & Inverter ACs engineered for reliable comfort.",
     cta: "Shop Split ACs",
@@ -14,7 +11,7 @@ const slides = [
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1700124113583-81aa99ea2aa2?w=1920&q=80&auto=format",
+    image: "https://images.unsplash.com/photo-1700124113583-81aa99ea2aa2?w=1200&q=75&auto=format",
     headline: "Powerful Cooling. Quiet Performance.",
     subtext: "Window, portable, and inverter options sized for every room.",
     cta: "Browse All ACs",
@@ -22,7 +19,7 @@ const slides = [
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1667983453881-4992fe86ab1b?w=1920&q=80&auto=format",
+    image: "https://images.unsplash.com/photo-1667983453881-4992fe86ab1b?w=1200&q=75&auto=format",
     headline: "Coolers & Fans for Everyday Comfort",
     subtext: "Trusted brands, clear specs, and secure checkout — all in one place.",
     cta: "Shop Air Coolers",
@@ -30,7 +27,7 @@ const slides = [
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1691351582808-329cde17ffa2?w=1920&q=80&auto=format",
+    image: "https://images.unsplash.com/photo-1691351582808-329cde17ffa2?w=1200&q=75&auto=format",
     headline: "Premium Comfort for Modern Homes",
     subtext: "Find the right tonnage, energy rating, and coverage for your space.",
     cta: "View New Arrivals",
@@ -61,8 +58,13 @@ function Hero() {
           className="absolute inset-0"
         >
           <img
-            src={slide.image}
-            alt=""
+            src={getOptimizedImageUrl(slide.image, { width: 1200, quality: 75 })}
+            alt={slide.headline}
+            width={1200}
+            height={600}
+            fetchPriority={index === 0 ? "high" : "low"}
+            decoding="async"
+            loading={index === 0 ? "eager" : "lazy"}
             className="h-full w-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/10 to-transparent" />

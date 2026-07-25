@@ -1,14 +1,19 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Snowflake } from "lucide-react";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 function AboutPage() {
   return (
     <div className="min-h-screen bg-sky-50/50">
       <section className="relative h-[38vh] min-h-[280px] overflow-hidden bg-sky-50">
         <img
-          src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1920&q=80"
+          src={getOptimizedImageUrl("https://images.unsplash.com/photo-1584622650111-993a426fbf0a", { width: 1200, quality: 75 })}
           alt="Modern Air Conditioner"
+          width={1200}
+          height={400}
+          fetchPriority="high"
+          decoding="async"
           className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/10 to-transparent" />

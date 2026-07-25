@@ -14,7 +14,15 @@ function GiftCardsPage() {
     <div className="bg-[#eaeded] min-h-screen">
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-[1200px] mx-auto">
-          <div className="h-[250px] md:h-[350px] w-full bg-[url('https://images.pexels.com/photos/5824883/pexels-photo-5824883.jpeg?auto=compress&cs=tinysrgb&w=1200')] bg-cover bg-center flex items-center p-8 md:p-16 relative">
+          <div className="h-[250px] md:h-[350px] w-full relative overflow-hidden flex items-center p-8 md:p-16">
+            <img
+              src="https://images.pexels.com/photos/5824883/pexels-photo-5824883.jpeg?auto=compress&cs=tinysrgb&w=1200"
+              alt="Gift Cards"
+              width={1200}
+              height={350}
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
             <div className="absolute inset-0 bg-black/40"></div>
             <div className="relative z-10 text-white max-w-lg">
               <h1 className="text-4xl md:text-5xl font-bold mb-4 shadow-sm">Give the perfect gift</h1>

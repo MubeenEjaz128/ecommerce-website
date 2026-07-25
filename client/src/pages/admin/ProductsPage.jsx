@@ -1,6 +1,7 @@
 import { useGetProductsQuery, useDeleteProductMutation } from "../../features/api/apiSlice";
 import { Link } from "react-router-dom";
-import { Plus, Edit2, Trash2, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit2, Trash2, Image as ImageIcon, Package } from "lucide-react";
+import { getOptimizedImageUrl } from "../../utils/imageUtils";
 
 function AdminProducts() {
   const { data: response, isLoading, refetch } = useGetProductsQuery();
@@ -72,7 +73,15 @@ function AdminProducts() {
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden shrink-0 border border-gray-200">
                           {p.images && p.images[0] ? (
-                            <img src={p.images[0].url} alt={p.name} className="w-full h-full object-cover" />
+                            <img
+                              src={getOptimizedImageUrl(p.images[0].url, { width: 150, quality: 75 })}
+                              alt={p.name}
+                              width={48}
+                              height={48}
+                              loading="lazy"
+                              decoding="async"
+                              className="w-full h-full object-cover"
+                            />
                           ) : (
                             <ImageIcon className="text-gray-400" size={20} />
                           )}

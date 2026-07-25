@@ -62,7 +62,13 @@ if (env.nodeEnv !== "production") {
   app.use(morgan("dev"));
 }
 
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "../uploads"), {
+    maxAge: "1y",
+    immutable: true,
+  })
+);
 
 app.use(apiLimiter);
 

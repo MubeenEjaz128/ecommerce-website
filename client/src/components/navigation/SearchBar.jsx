@@ -2,15 +2,35 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, X } from "lucide-react";
 
-function SearchBar({ compact = false }) {
-  const [open, setOpen] = useState(!compact);
+function SearchBar({ compact = false, onClose }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef(null);
+  const formRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (open && compact) inputRef.current?.focus();
-  }, [open, compact]);
+    inputRef.current?.focus();
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && onClose) {
+        onClose();
+      }
+    };
+
+    const handleClickOutside = (e) => {
+      if (formRef.current && !formRef.current.contains(e.target) && onClose) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
 
   const submit = (e) => {
     e.preventDefault();
@@ -18,27 +38,15 @@ function SearchBar({ compact = false }) {
     if (!q) return;
     navigate(`/shop?search=${encodeURIComponent(q)}`);
     setQuery("");
-    if (compact) setOpen(false);
+    if (onClose) onClose();
   };
-
-  if (compact && !open) {
-    return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="flex h-10 w-10 items-center justify-center rounded-md text-slate-200 transition hover:bg-white/10"
-        aria-label="Open search"
-      >
-        <Search size={20} />
-      </button>
-    );
-  }
 
   return (
     <form
+      ref={formRef}
       onSubmit={submit}
-      className={`flex h-10 items-center overflow-hidden rounded-md bg-white focus-within:ring-2 focus-within:ring-sky-400 ${
-        compact ? "w-44 sm:w-56" : "w-full max-w-md flex-1"
+      className={`flex h-10 items-center overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm focus-within:border-sky-500 focus-within:ring-2 focus-within:ring-sky-200 transition ${
+        compact ? "w-full" : "w-full max-w-md flex-1"
       }`}
     >
       <input
@@ -46,25 +54,22 @@ function SearchBar({ compact = false }) {
         type="search"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search ACs, coolers..."
-        className="h-full min-w-0 flex-1 px-3 text-sm text-slate-900 outline-none placeholder:text-slate-400"
+        placeholder="Search ACs, coolers, brands..."
+        className="h-full min-w-0 flex-1 px-3.5 text-sm text-slate-900 outline-none placeholder:text-slate-400"
       />
-      {compact && (
+      {compact && onClose && (
         <button
           type="button"
-          onClick={() => {
-            setOpen(false);
-            setQuery("");
-          }}
-          className="px-2 text-slate-500 hover:text-slate-800"
+          onClick={onClose}
+          className="flex h-10 w-10 items-center justify-center text-slate-400 transition hover:text-slate-700"
           aria-label="Close search"
         >
-          <X size={16} />
+          <X size={18} />
         </button>
       )}
       <button
         type="submit"
-        className="flex h-full items-center justify-center bg-sky-500 px-3 text-white transition hover:bg-sky-400"
+        className="flex h-full items-center justify-center bg-sky-600 px-4 text-white transition hover:bg-sky-500 min-w-[44px]"
         aria-label="Search"
       >
         <Search size={18} />
