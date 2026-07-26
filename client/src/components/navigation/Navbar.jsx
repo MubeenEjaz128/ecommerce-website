@@ -87,14 +87,14 @@ function Navbar() {
             <Search size={19} />
           </button>
 
-          {/* Category Dropdown on Mobile */}
+          {/* Category Dropdown on Tablet Header */}
           <div className="hidden sm:block lg:hidden">
             <CategoryDropdown />
           </div>
 
-          {/* Language Dropdown */}
+          {/* Language Dropdown on Tablet Header */}
           <div className="hidden sm:block lg:hidden">
-            <LanguageDropdown />
+            <LanguageDropdown align="right" />
           </div>
 
           {/* Cart Link */}
@@ -150,9 +150,9 @@ function Navbar() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-slate-200 bg-white shadow-md lg:hidden"
+            className="border-t border-slate-200 bg-white shadow-md lg:hidden"
           >
-            <div className="flex flex-col gap-1 px-4 py-3">
+            <div className="flex flex-col gap-2.5 px-4 py-3">
               <NavLink
                 to="/"
                 end
@@ -165,9 +165,11 @@ function Navbar() {
               >
                 Home
               </NavLink>
-              <div className="py-1">
-                <CategoryDropdown />
+
+              <div className="py-0.5">
+                <CategoryDropdown inline onSelect={() => setMobileOpen(false)} />
               </div>
+
               <NavLink
                 to="/about"
                 onClick={() => setMobileOpen(false)}
@@ -179,6 +181,7 @@ function Navbar() {
               >
                 About Us
               </NavLink>
+
               <NavLink
                 to="/contact"
                 onClick={() => setMobileOpen(false)}
@@ -190,9 +193,10 @@ function Navbar() {
               >
                 Contact Us
               </NavLink>
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between px-3">
-                <span className="text-xs font-semibold text-slate-500 uppercase">Language</span>
-                <LanguageDropdown />
+
+              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider px-1">Language</span>
+                <LanguageDropdown inline />
               </div>
             </div>
           </motion.nav>

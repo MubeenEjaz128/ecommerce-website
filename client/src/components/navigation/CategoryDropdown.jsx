@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const menuSections = [
@@ -16,12 +16,12 @@ const menuSections = [
   },
 ];
 
-function CategoryDropdown() {
+function CategoryDropdown({ inline = false, onSelect }) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
 
   useEffect(() => {
-    if (!open) return undefined;
+    if (!open || inline) return undefined;
     const onKey = (e) => {
       if (e.key === "Escape") setOpen(false);
     };
@@ -34,7 +34,52 @@ function CategoryDropdown() {
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("mousedown", onClick);
     };
-  }, [open]);
+  }, [open, inline]);
+
+  const handleLinkClick = () => {
+    setOpen(false);
+    if (onSelect) onSelect();
+  };
+
+  if (inline) {
+    return (
+      <div className="w-full">
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="flex w-full items-center justify-between px-3.5 py-2.5 rounded-lg bg-sky-50 text-sky-800 text-sm font-semibold border border-sky-100 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Menu size={18} className="text-sky-600" />
+            <span>Categories</span>
+          </div>
+          <ChevronDown size={16} className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        </button>
+
+        {open && (
+          <div className="mt-2 space-y-1 rounded-xl bg-slate-50 p-2 border border-slate-200">
+            {menuSections.map((section) => (
+              <div key={section.title}>
+                <div className="px-3 py-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  {section.title}
+                </div>
+                {section.links.map((link) => (
+                  <Link
+                    key={link.label}
+                    to={link.to}
+                    onClick={handleLinkClick}
+                    className="block px-3 py-2 text-sm font-medium text-slate-700 hover:bg-white hover:text-sky-600 rounded-md transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="relative" ref={panelRef}>
@@ -83,7 +128,7 @@ function CategoryDropdown() {
                         <li key={link.label}>
                           <Link
                             to={link.to}
-                            onClick={() => setOpen(false)}
+                            onClick={handleLinkClick}
                             className="block px-5 py-2.5 text-sm text-slate-700 transition hover:bg-sky-50 hover:text-sky-800"
                           >
                             {link.label}

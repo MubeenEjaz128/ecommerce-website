@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ChevronDown, Globe } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 const languages = [
-  { code: "en", name: "English", flag: "🇺🇸" },
+  { code: "en", name: "US English", flag: "🇺🇸" },
   { code: "zh-CN", name: "Chinese", flag: "🇨🇳" },
   { code: "ja", name: "Japanese", flag: "🇯🇵" },
   { code: "fr", name: "French", flag: "🇫🇷" },
@@ -10,7 +10,7 @@ const languages = [
   { code: "ar", name: "Arabic", flag: "🇸🇦" },
 ];
 
-export default function LanguageDropdown() {
+export default function LanguageDropdown({ inline = false, align = "left" }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedLang, setSelectedLang] = useState(languages[0]);
   const dropdownRef = useRef(null);
@@ -28,7 +28,7 @@ export default function LanguageDropdown() {
   const changeLanguage = (lang) => {
     setSelectedLang(lang);
     setIsOpen(false);
-    
+
     // Trigger Google Translate hidden select
     const select = document.querySelector(".goog-te-combo");
     if (select) {
@@ -37,10 +37,49 @@ export default function LanguageDropdown() {
     }
   };
 
+  if (inline) {
+    return (
+      <div className="w-full notranslate">
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="flex w-full items-center justify-between px-3.5 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-slate-700 text-sm font-medium border border-slate-200"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-lg leading-none">{selectedLang.flag}</span>
+            <span className="font-medium text-slate-800">{selectedLang.name}</span>
+          </div>
+          <ChevronDown size={16} className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+        </button>
+
+        {isOpen && (
+          <div className="mt-2 grid grid-cols-2 gap-2 p-2 bg-slate-50 rounded-xl border border-slate-200">
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                type="button"
+                onClick={() => changeLanguage(lang)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all text-left ${
+                  selectedLang.code === lang.code
+                    ? "bg-sky-600 text-white font-bold shadow-sm"
+                    : "bg-white text-slate-700 hover:bg-sky-50 hover:text-sky-600 border border-slate-200"
+                }`}
+              >
+                <span className="text-base">{lang.flag}</span>
+                <span className="truncate">{lang.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="relative notranslate" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
         className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-600 hover:text-sky-600"
       >
         <span className="text-lg leading-none">{selectedLang.flag}</span>
@@ -49,15 +88,20 @@ export default function LanguageDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 w-40 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl overflow-hidden z-50">
+        <div
+          className={`absolute top-full ${
+            align === "right" ? "right-0" : "left-0"
+          } mt-1 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl overflow-hidden z-50`}
+        >
           <div className="py-1">
             {languages.map((lang) => (
               <button
                 key={lang.code}
+                type="button"
                 onClick={() => changeLanguage(lang)}
                 className={`w-full text-left px-4 py-2.5 text-sm flex items-center gap-3 transition-colors ${
-                  selectedLang.code === lang.code 
-                    ? "bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 font-bold" 
+                  selectedLang.code === lang.code
+                    ? "bg-sky-50 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400 font-bold"
                     : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                 }`}
               >
