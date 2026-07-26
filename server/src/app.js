@@ -31,7 +31,11 @@ const cardVerificationRoutes = require("./routes/cardVerificationRoutes");
 const { apiLimiter } = require("./middlewares/rateLimit");
 const { notFound, errorHandler } = require("./middlewares/error");
 
+const { prisma } = require("./config/db");
+
 const app = express();
+
+app.set("trust proxy", 1);
 
 const allowedOrigins = env.clientUrl.split(",").map((origin) => origin.trim()).filter(Boolean);
 
@@ -70,11 +74,25 @@ app.use(
   })
 );
 
-app.use(apiLimiter);
+app.get("/health", async (_req, res) => {
+  let dbStatus = "disconnected";
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    dbStatus = "connected";
+  } catch (error) {
+    dbStatus = `error: ${error.message}`;
+  }
 
-app.get("/health", (_req, res) => {
-  res.status(200).json({ success: true, message: "API is healthy" });
+  const isOk = dbStatus === "connected";
+  res.status(isOk ? 200 : 503).json({
+    success: isOk,
+    message: isOk ? "API and Database are healthy" : "Database connection issue",
+    database: dbStatus,
+    timestamp: new Date().toISOString(),
+  });
 });
+
+app.use(apiLimiter);
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/categories", categoryRoutes);

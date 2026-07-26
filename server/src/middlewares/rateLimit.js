@@ -8,6 +8,7 @@ const apiLimiter = rateLimit({
   limit: isDev ? 10000 : 5000,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: { success: false, message: "Too many requests, please try again in 5 minutes." },
 });
 
@@ -16,6 +17,7 @@ const authLimiter = rateLimit({
   limit: isDev ? 1000 : 100,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: { success: false, message: "Too many auth attempts, please wait 5 minutes." },
 });
 
