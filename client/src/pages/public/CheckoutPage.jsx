@@ -127,6 +127,7 @@ function CheckoutPage() {
         },
         amount: totals.total,
         shippingAddress: form,
+        cartItems: activeItems,
       }).unwrap();
 
       const payload = result?.data || result;
@@ -236,12 +237,6 @@ function CheckoutPage() {
       if (pollingRef.current) clearInterval(pollingRef.current);
     };
   }, []);
-
-  useEffect(() => {
-    if (!accessToken) {
-      navigate("/login?redirect=/checkout");
-    }
-  }, [accessToken, navigate]);
 
   // ── LOADING / PROCESSING STATE ──
   if (flowState === "processing") {

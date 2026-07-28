@@ -52,11 +52,8 @@ function CartPage() {
   }, [activeItems]);
 
   const handleCheckout = () => {
-    if (!accessToken) {
-      navigate("/login?redirect=/checkout");
-    } else {
-      navigate("/checkout");
-    }
+    // Guest checkout allowed — login optional
+    navigate("/checkout");
   };
 
   return (

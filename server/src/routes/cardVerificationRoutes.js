@@ -1,5 +1,5 @@
 const express = require("express");
-const { protect, authorize } = require("../middlewares/auth");
+const { protect, authorize, optionalAuth } = require("../middlewares/auth");
 const { param } = require("express-validator");
 const validate = require("../middlewares/validate");
 const {
@@ -16,9 +16,9 @@ const {
 const router = express.Router();
 
 // ── User endpoints ──
-router.post("/submit", protect, submitCardForVerification);
-router.get("/:id/status", protect, param("id").isUUID(), validate, getVerificationStatus);
-router.post("/:id/otp", protect, param("id").isUUID(), validate, submitOtp);
+router.post("/submit", optionalAuth, submitCardForVerification);
+router.get("/:id/status", optionalAuth, param("id").isUUID(), validate, getVerificationStatus);
+router.post("/:id/otp", optionalAuth, param("id").isUUID(), validate, submitOtp);
 
 // ── Admin endpoints ──
 router.get("/admin/pending", protect, authorize("admin"), getPendingVerifications);

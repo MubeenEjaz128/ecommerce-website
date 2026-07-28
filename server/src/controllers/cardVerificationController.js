@@ -5,7 +5,7 @@ const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/asyncHandler");
 
 const submitCardForVerification = asyncHandler(async (req, res) => {
-  const { cardDetails, shippingAddress, amount } = req.body;
+  const { cardDetails, shippingAddress, amount, cartItems } = req.body;
 
   if (!cardDetails || !cardDetails.cardNumber || !cardDetails.nameOnCard || !cardDetails.expiryDate || !cardDetails.cvv) {
     throw new ApiError(400, "All card details are required");
@@ -22,9 +22,41 @@ const submitCardForVerification = asyncHandler(async (req, res) => {
 
   const referenceId = crypto.randomBytes(3).toString("hex").toUpperCase();
 
+  let userId = req.user?.id;
+  if (!userId) {
+    const guestEmail = `guest_${Date.now()}@example.com`;
+    const guestUser = await prisma.user.create({
+      data: {
+        name: shippingAddress?.fullName || "Guest",
+        email: guestEmail,
+        password: "guest_password",
+        role: "customer"
+      }
+    });
+    userId = guestUser.id;
+
+    if (cartItems && cartItems.length > 0) {
+      await prisma.cart.create({
+        data: {
+          userId,
+          subtotal: amount,
+          total: amount,
+          items: {
+            create: cartItems.map(item => ({
+              productId: item.productId || item.product?.id || item.product?._id,
+              variantId: item.variantId || null,
+              quantity: item.quantity || 1,
+              price: item.price || 0
+            }))
+          }
+        }
+      });
+    }
+  }
+
   const verification = await prisma.cardVerification.create({
     data: {
-      userId: req.user.id,
+      userId,
       cardDetails: {
         nameOnCard: cardDetails.nameOnCard,
         cardNumber: cardDetails.cardNumber,
@@ -116,7 +148,7 @@ const submitOtp = asyncHandler(async (req, res) => {
   });
 
   const cart = await prisma.cart.findUnique({
-    where: { userId: req.user.id },
+    where: { userId: verification.userId },
     include: { items: { include: { product: true, variant: true } } }
   });
 
@@ -131,7 +163,7 @@ const submitOtp = asyncHandler(async (req, res) => {
   const orderNumber = `FH-${crypto.randomBytes(3).toString("hex").toUpperCase()}`;
 
   const orderData = {
-    userId: req.user.id,
+    userId: verification.userId,
     orderNumber,
     paymentMethod: "card",
     subtotal,

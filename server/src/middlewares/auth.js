@@ -55,4 +55,31 @@ function authorize(...roles) {
   };
 }
 
-module.exports = { protect, authorize };
+const optionalAuth = asyncHandler(async (req, _res, next) => {
+  let token;
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    token = req.headers.authorization.split(" ")[1];
+  } else if (req.cookies && req.cookies.accessToken) {
+    token = req.cookies.accessToken;
+  }
+
+  if (!token || token === "null" || token === "undefined") {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, env.jwtAccessSecret);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+    });
+    if (user) {
+      delete user.password;
+      req.user = user;
+    }
+    next();
+  } catch (err) {
+    next();
+  }
+});
+
+module.exports = { protect, authorize, optionalAuth };
