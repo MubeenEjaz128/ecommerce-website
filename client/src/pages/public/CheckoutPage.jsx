@@ -237,6 +237,12 @@ function CheckoutPage() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!accessToken) {
+      navigate("/login?redirect=/checkout");
+    }
+  }, [accessToken, navigate]);
+
   // ── LOADING / PROCESSING STATE ──
   if (flowState === "processing") {
     return (

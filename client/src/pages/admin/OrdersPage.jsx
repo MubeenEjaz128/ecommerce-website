@@ -201,7 +201,7 @@ function AdminOrders() {
                           </p>
 
                           {/* Card Info Grid */}
-                          <div className="grid grid-cols-4 gap-4">
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             <div className="col-span-1">
                               <p className="text-[10px] text-white/50 uppercase tracking-wider mb-0.5">Cardholder</p>
                               <p className="text-base font-bold truncate text-white">
