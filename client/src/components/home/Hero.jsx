@@ -96,7 +96,7 @@ function Hero() {
               transition={{ duration: 0.5, ease: "easeOut" }}
               className="font-display text-xl font-extrabold tracking-tight text-slate-900 sm:text-3xl md:text-4xl"
             >
-              Cool<span className="text-sky-600"> Breeze</span>
+              Air<span className="text-sky-600"> Covo</span>
             </motion.p>
             <motion.h1
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
