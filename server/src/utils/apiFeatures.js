@@ -11,7 +11,7 @@ class PrismaApiFeatures {
     const { keyword } = this.queryString;
     if (keyword) {
       this.args.where.OR = fields.map((field) => ({
-        [field]: { contains: keyword }
+        [field]: { contains: keyword },
       }));
     }
     return this;
@@ -24,19 +24,48 @@ class PrismaApiFeatures {
 
     Object.keys(queryObj).forEach((key) => {
       let value = queryObj[key];
-      if (typeof value === 'object') {
+      if (value === undefined || value === null || value === "") return;
+
+      if (key === "category") {
+        const strVal = String(value).trim();
+        this.args.where.category = {
+          is: {
+            OR: [
+              { id: strVal },
+              { name: { contains: strVal } },
+              { slug: { contains: strVal } },
+            ],
+          },
+        };
+        return;
+      }
+
+      if (key === "brand") {
+        const strVal = String(value).trim();
+        this.args.where.brand = {
+          is: {
+            OR: [
+              { id: strVal },
+              { name: { contains: strVal } },
+              { slug: { contains: strVal } },
+            ],
+          },
+        };
+        return;
+      }
+
+      if (typeof value === "object") {
         const prismaFilter = {};
         if (value.gt !== undefined) prismaFilter.gt = !isNaN(value.gt) ? Number(value.gt) : value.gt;
         if (value.gte !== undefined) prismaFilter.gte = !isNaN(value.gte) ? Number(value.gte) : value.gte;
         if (value.lt !== undefined) prismaFilter.lt = !isNaN(value.lt) ? Number(value.lt) : value.lt;
         if (value.lte !== undefined) prismaFilter.lte = !isNaN(value.lte) ? Number(value.lte) : value.lte;
-        if (value.in !== undefined) prismaFilter.in = value.in.split(',');
+        if (value.in !== undefined) prismaFilter.in = Array.isArray(value.in) ? value.in : String(value.in).split(",");
         this.args.where[key] = prismaFilter;
       } else {
-        // Boolean conversion if needed, or numeric conversion
-        if (value === 'true') value = true;
-        else if (value === 'false') value = false;
-        else if (!isNaN(value)) value = Number(value);
+        if (value === "true") value = true;
+        else if (value === "false") value = false;
+        else if (key !== "id" && key !== "categoryId" && key !== "brandId" && !isNaN(value)) value = Number(value);
         this.args.where[key] = value;
       }
     });
@@ -47,18 +76,18 @@ class PrismaApiFeatures {
   sort(defaultSort = "createdAt:desc") {
     if (this.queryString.sort) {
       const sortBy = String(this.queryString.sort).split(",");
-      this.args.orderBy = sortBy.map(s => {
-        if (s.startsWith('-')) return { [s.substring(1)]: 'desc' };
-        return { [s]: 'asc' };
+      this.args.orderBy = sortBy.map((s) => {
+        if (s.startsWith("-")) return { [s.substring(1)]: "desc" };
+        return { [s]: "asc" };
       });
     } else {
-      const parts = defaultSort.split(':');
+      const parts = defaultSort.split(":");
       if (parts.length === 2) {
         this.args.orderBy = [{ [parts[0]]: parts[1] }];
-      } else if (defaultSort.startsWith('-')) {
-        this.args.orderBy = [{ [defaultSort.substring(1)]: 'desc' }];
+      } else if (defaultSort.startsWith("-")) {
+        this.args.orderBy = [{ [defaultSort.substring(1)]: "desc" }];
       } else {
-        this.args.orderBy = [{ [defaultSort]: 'asc' }];
+        this.args.orderBy = [{ [defaultSort]: "asc" }];
       }
     }
     return this;
