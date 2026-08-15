@@ -6,12 +6,26 @@ const { protect, authorize } = require("../middlewares/auth");
 const validate = require("../middlewares/validate");
 const slugify = require("slugify");
 
+async function generateUniqueSlug(name, currentProductId = null) {
+  const baseSlug = slugify(name || "product", { lower: true, strict: true }) || "product";
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (true) {
+    const existing = await prisma.product.findUnique({ where: { slug } });
+    if (!existing || (currentProductId && existing.id === currentProductId)) {
+      return slug;
+    }
+    slug = `${baseSlug}-${counter++}`;
+  }
+}
+
 const controller = buildCrudController(prisma.product, "Product", {
   slugField: "slug",
   searchFields: ["name", "description"],
   include: { brand: true, category: true, images: true, variants: true, reviews: true },
   defaultSort: "-createdAt",
-  transformCreate: (req) => {
+  transformCreate: async (req) => {
     const data = { ...req.body };
     const brandId = data.brandId || data.brand;
     const categoryId = data.categoryId || data.category;
@@ -28,8 +42,8 @@ const controller = buildCrudController(prisma.product, "Product", {
       price: Number(data.price),
     };
 
-    if (payload.name && !payload.slug) {
-      payload.slug = slugify(payload.name, { lower: true, strict: true });
+    if (payload.name) {
+      payload.slug = await generateUniqueSlug(payload.name);
     }
 
     if (Array.isArray(data.images)) {
@@ -57,7 +71,7 @@ const controller = buildCrudController(prisma.product, "Product", {
 
     return payload;
   },
-  transformUpdate: (req) => {
+  transformUpdate: async (req) => {
     const data = { ...req.body };
     const brandId = data.brandId || data.brand;
     const categoryId = data.categoryId || data.category;
@@ -72,8 +86,11 @@ const controller = buildCrudController(prisma.product, "Product", {
     if (categoryId) payload.categoryId = categoryId;
     if (payload.price !== undefined) payload.price = Number(payload.price);
 
-    if (payload.name && !payload.slug) {
-      payload.slug = slugify(payload.name, { lower: true, strict: true });
+    if (payload.name) {
+      const existingProduct = await prisma.product.findFirst({
+        where: { slug: req.params.slug },
+      });
+      payload.slug = await generateUniqueSlug(payload.name, existingProduct?.id);
     }
 
     if (Array.isArray(data.images)) {

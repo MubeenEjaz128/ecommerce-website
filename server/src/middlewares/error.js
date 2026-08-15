@@ -15,9 +15,9 @@ function errorHandler(err, req, res, _next) {
     error = new ApiError(400, `Invalid ${error.path}: ${error.value}`);
   }
 
-  if (error.code === 11000) {
-    const field = Object.keys(error.keyValue || {})[0] || "field";
-    error = new ApiError(409, `${field} already exists`);
+  if (error.code === 11000 || error.code === "P2002") {
+    const target = error.meta?.target || Object.keys(error.keyValue || {})[0] || "field";
+    error = new ApiError(400, `A product or record with this ${target} already exists. Please use a unique value.`);
   }
 
   if (error.name === "ValidationError") {
