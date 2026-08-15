@@ -54,7 +54,7 @@ function RegisterPage() {
         <div className="text-center">
           <Link to="/" className="inline-block mb-4">
             <span className="text-3xl font-extrabold tracking-tight text-gray-900">
-              Cool<span className="text-sky-600"> Breeze</span>
+              Air<span className="text-sky-600"> Covo</span>
             </span>
           </Link>
           <h2 className="text-2xl font-bold text-gray-900">Create account</h2>
@@ -122,7 +122,7 @@ function RegisterPage() {
           </div>
           
           <div className="text-xs text-gray-600 mt-4 border-b border-gray-200 pb-6">
-            By creating an account, you agree to Cool Breeze&apos;s <Link to="/policies/terms" className="text-sky-700 hover:underline">Conditions of Use</Link> and <Link to="/policies/privacy" className="text-sky-700 hover:underline">Privacy Notice</Link>.
+            By creating an account, you agree to Air Covo&apos;s <Link to="/policies/terms" className="text-sky-700 hover:underline">Conditions of Use</Link> and <Link to="/policies/privacy" className="text-sky-700 hover:underline">Privacy Notice</Link>.
           </div>
 
           <div className="pt-4 text-sm text-gray-900">

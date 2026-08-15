@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-/** Distinct Cool Breeze mark — snowflake breeze glyph + wordmark */
+/** Distinct Air Covo mark — snowflake breeze glyph + wordmark */
 function BrandLogo({ size = "md", theme = "dark", className = "" }) {
   const sizes = {
     sm: { box: "h-8 w-8", svg: "h-4.5 w-4.5", text: "text-base sm:text-xl", gap: "gap-2" },
@@ -35,8 +35,8 @@ function BrandLogo({ size = "md", theme = "dark", className = "" }) {
         </svg>
       </span>
       <span className={`font-display font-extrabold leading-none tracking-tight ${s.text}`}>
-        <span className={light ? "text-slate-900" : "text-white"}>Cool</span>
-        <span className={light ? "text-sky-600" : "text-sky-300"}> Breeze</span>
+        <span className={light ? "text-slate-900" : "text-white"}>Air</span>
+        <span className={light ? "text-sky-600" : "text-sky-300"}> Covo</span>
       </span>
     </Link>
   );

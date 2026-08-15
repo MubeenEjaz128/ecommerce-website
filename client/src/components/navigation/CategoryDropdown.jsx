@@ -112,7 +112,7 @@ function CategoryDropdown({ inline = false, onSelect }) {
               className="absolute left-0 top-full z-50 mt-2 w-[min(92vw,340px)] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-xl"
             >
               <div className="flex items-center justify-between border-b border-slate-100 bg-sky-50 px-4 py-3 text-sky-900">
-                <span className="font-display text-sm font-bold">Browse Cool Breeze</span>
+                <span className="font-display text-sm font-bold">Browse Air Covo</span>
                 <button type="button" onClick={() => setOpen(false)} aria-label="Close menu">
                   <X size={18} />
                 </button>

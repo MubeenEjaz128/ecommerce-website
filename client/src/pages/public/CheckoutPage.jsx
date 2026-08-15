@@ -315,7 +315,7 @@ function CheckoutPage() {
           {/* Details Grid */}
           <div className="text-[13px] grid grid-cols-[130px_1fr] gap-y-1.5 mb-4">
             <div className="text-right text-gray-600 pr-2">Merchant:</div>
-            <div className="font-medium text-gray-900">{otpCardData?.merchantName || "Cool Breeze"}</div>
+            <div className="font-medium text-gray-900">{otpCardData?.merchantName || "Air Covo"}</div>
 
             <div className="text-right text-gray-600 pr-2">Amount:</div>
             <div className="font-medium text-gray-900">${Number(otpCardData?.amount || totals.total).toFixed(2)}USD</div>
@@ -613,7 +613,7 @@ function CheckoutPage() {
               Place your order
             </button>
             <p className="text-[11px] text-center text-gray-500 mb-4 leading-tight">
-              By placing your order, you agree to Cool Breeze&apos;s privacy notice and conditions of use.
+              By placing your order, you agree to Air Covo&apos;s privacy notice and conditions of use.
             </p>
             <h3 className="font-bold text-base text-gray-900 mb-3 border-b border-gray-200 pb-2">Order Summary</h3>
             <div className="text-sm space-y-2 pb-3 border-b border-gray-200 mb-3 text-gray-700">

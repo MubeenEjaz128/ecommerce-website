@@ -6,7 +6,7 @@ const policyContent = {
     sections: [
       {
         subtitle: "Information We Collect",
-        text: "At Cool Breeze, we collect personal information such as your name, email address, shipping address, and payment details when you place an order. We also collect non-identifiable data such as browser type and IP address to improve our website experience."
+        text: "At Air Covo, we collect personal information such as your name, email address, shipping address, and payment details when you place an order. We also collect non-identifiable data such as browser type and IP address to improve our website experience."
       },
       {
         subtitle: "How We Use Your Information",
@@ -23,7 +23,7 @@ const policyContent = {
     sections: [
       {
         subtitle: "General Terms",
-        text: "By accessing and using the Cool Breeze website, you agree to comply with and be bound by these terms. If you do not agree, please refrain from using our services. We reserve the right to update or modify these terms at any time."
+        text: "By accessing and using the Air Covo website, you agree to comply with and be bound by these terms. If you do not agree, please refrain from using our services. We reserve the right to update or modify these terms at any time."
       },
       {
         subtitle: "Pricing and Availability",
@@ -74,7 +74,7 @@ const policyContent = {
     sections: [
       {
         subtitle: "Earning Points",
-        text: "Join the Cool Breeze Loyalty Program and earn points for every dollar spent on our store. You can also earn bonus points for signing up, leaving reviews, and referring friends."
+        text: "Join the Air Covo Loyalty Program and earn points for every dollar spent on our store. You can also earn bonus points for signing up, leaving reviews, and referring friends."
       },
       {
         subtitle: "Redeeming Points",
@@ -93,7 +93,7 @@ function PolicyPage() {
 
   return (
     <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wider text-sky-700">Cool Breeze</p>
+      <p className="text-sm font-semibold uppercase tracking-wider text-sky-700">Air Covo</p>
       <h1 className="mt-2 font-display text-4xl font-extrabold capitalize text-slate-900">{content.title}</h1>
       
       <div className="mt-10 space-y-8">

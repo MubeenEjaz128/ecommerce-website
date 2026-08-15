@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import ProductCard from "./ProductCard";
 
 const AC_TYPES = ["all", "Split ACs", "Window ACs", "Portable ACs", "Inverter ACs", "Air Coolers", "Fans"];
+const BATCH_SIZE = 12;
 
 function ProductGrid({
   products = [],
@@ -15,6 +16,8 @@ function ProductGrid({
   const [brand, setBrand] = useState("all");
   const [sort, setSort] = useState("featured");
   const [maxPrice, setMaxPrice] = useState("");
+  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
+  const sentinelRef = useRef(null);
 
   const brands = useMemo(() => {
     const set = new Set();
@@ -53,6 +56,36 @@ function ProductGrid({
 
     return list;
   }, [products, type, brand, sort, maxPrice]);
+
+  // Reset visible count when filters or products change
+  useEffect(() => {
+    setVisibleCount(BATCH_SIZE);
+  }, [type, brand, sort, maxPrice, products.length]);
+
+  // IntersectionObserver for lazy loading more products on scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + BATCH_SIZE, filtered.length));
+        }
+      },
+      { rootMargin: "250px" }
+    );
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel && visibleCount < filtered.length) {
+      observer.observe(currentSentinel);
+    }
+
+    return () => {
+      if (currentSentinel) observer.unobserve(currentSentinel);
+    };
+  }, [visibleCount, filtered.length]);
+
+  const visibleProducts = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   return (
     <section className="w-full">
@@ -138,11 +171,23 @@ function ProductGrid({
       ) : filtered.length === 0 ? (
         <p className="py-12 text-center text-slate-500">{emptyMessage}</p>
       ) : (
-        <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
-          {filtered.map((product) => (
-            <ProductCard key={product._id || product.id} product={product} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 md:gap-6">
+            {visibleProducts.map((product) => (
+              <ProductCard key={product._id || product.id} product={product} />
+            ))}
+          </div>
+
+          {/* Infinite Scroll Sentinel */}
+          {hasMore && (
+            <div ref={sentinelRef} className="py-8 flex justify-center items-center">
+              <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
+                <span className="h-4 w-4 rounded-full border-2 border-sky-600 border-t-transparent animate-spin"></span>
+                <span>Loading more products...</span>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </section>
   );

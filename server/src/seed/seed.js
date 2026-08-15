@@ -95,7 +95,7 @@ async function seedDatabase() {
     return {
       name,
       slug: slugify(name, { lower: true, strict: true }),
-      description: `${brand.name} ${template.label} with ${template.tonnage} capacity, ${template.energy} energy rating, ideal for ${template.coverage}. Quiet operation and reliable cooling from Cool Breeze.`,
+      description: `${brand.name} ${template.label} with ${template.tonnage} capacity, ${template.energy} energy rating, ideal for ${template.coverage}. Quiet operation and reliable cooling from Air Covo.`,
       shortDescription: `${template.tonnage} · ${template.energy} · ${template.coverage}`,
       brandId: brand.id,
       categoryId: category.id,
@@ -146,7 +146,7 @@ async function seedDatabase() {
     await prisma.product.create({ data: p });
   }
 
-  console.log("Cool Breeze seed completed");
+  console.log("Air Covo seed completed");
   console.log(`Admin login: ${admin.email} / Admin123!`);
   console.log(`Customer login: ${customer.email} / Customer123!`);
 }

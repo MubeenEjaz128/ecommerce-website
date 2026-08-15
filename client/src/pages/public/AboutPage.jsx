@@ -20,7 +20,7 @@ function AboutPage() {
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
             <p className="flex items-center gap-2 font-display text-lg font-bold text-sky-600">
-              <Snowflake size={20} /> Cool Breeze
+              <Snowflake size={20} /> Air Covo
             </p>
             <h1 className="mt-1 font-display text-4xl font-extrabold text-slate-800 sm:text-5xl">About Us</h1>
           </div>
@@ -30,7 +30,7 @@ function AboutPage() {
       <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6 lg:px-8">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
           <p className="text-lg leading-relaxed text-slate-600">
-            Cool Breeze is a modern online store dedicated to air conditioners and cooling appliances —
+            Air Covo is a modern online store dedicated to air conditioners and cooling appliances —
             Split ACs, Window ACs, Portable units, Inverter models, air coolers, fans, and filters.
           </p>
           <p className="mt-5 text-base leading-relaxed text-slate-600">

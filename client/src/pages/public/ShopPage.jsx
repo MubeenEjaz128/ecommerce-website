@@ -22,7 +22,7 @@ function ShopPage() {
   return (
     <div className="min-h-screen bg-sky-50/50">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">Cooling Shop</h1>
+        <h1 className="font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">Air Covo Shop</h1>
         <p className="mt-2 text-slate-500">
           {searchParam
             ? `Results for “${searchParam}”`

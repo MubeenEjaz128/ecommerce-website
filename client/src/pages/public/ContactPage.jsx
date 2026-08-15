@@ -8,7 +8,7 @@ function ContactPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    toast.success("Message sent — Cool Breeze support will reply soon.");
+    toast.success("Message sent — Air Covo support will reply soon.");
     setForm({ name: "", email: "", message: "" });
   };
 
@@ -28,7 +28,7 @@ function ContactPage() {
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-7xl px-4 pb-8 sm:px-6 lg:px-8 relative z-10">
             <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-sky-700">
-              <Snowflake size={16} /> Cool Breeze
+              <Snowflake size={16} /> Air Covo
             </p>
             <h1 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">Contact Us</h1>
           </div>
@@ -84,7 +84,7 @@ function ContactPage() {
               <Mail className="shrink-0 text-sky-600" size={22} />
               <div>
                 <h3 className="font-semibold text-slate-900">Email</h3>
-                <p className="mt-1 text-sm text-slate-500">support@coolbreeze.com</p>
+                <p className="mt-1 text-sm text-slate-500">support@aircovo.com</p>
               </div>
             </div>
             <div className="flex gap-4 border border-slate-200 bg-white p-5">

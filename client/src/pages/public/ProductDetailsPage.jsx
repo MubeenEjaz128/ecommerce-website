@@ -189,7 +189,7 @@ function ProductDetailsPage() {
           </div>
 
           <p className="mt-5 text-sm leading-relaxed text-slate-600">
-            {product.description || "Reliable cooling performance from Cool Breeze."}
+            {product.description || "Reliable cooling performance from Air Covo."}
           </p>
 
           {variants.length > 0 && (
@@ -381,7 +381,7 @@ function ProductDetailsPage() {
                 ))}
               </div>
               <p className="text-sm text-slate-600">
-                Excellent cooling performance and clear product specs. Happy with my Cool Breeze purchase.
+                Excellent cooling performance and clear product specs. Happy with my Air Covo purchase.
               </p>
             </div>
           ))}

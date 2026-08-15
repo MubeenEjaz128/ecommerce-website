@@ -40,7 +40,7 @@ function AdminLoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-900/50 text-blue-500 mb-4">
             <Lock size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-white">Cool Breeze Admin</h2>
+          <h2 className="text-2xl font-bold text-white">Air Covo Admin</h2>
           <p className="text-gray-400 mt-2 text-sm">Secure access for authorized personnel only.</p>
         </div>
         
@@ -99,7 +99,7 @@ function AdminLoginPage() {
         
         <div className="px-8 py-4 bg-gray-900 border-t border-gray-700 text-center">
           <p className="text-xs text-gray-500">
-            &copy; {new Date().getFullYear()} Cool Breeze Admin
+            &copy; {new Date().getFullYear()} Air Covo Admin
           </p>
         </div>
       </div>

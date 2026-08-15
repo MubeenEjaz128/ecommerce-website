@@ -23,23 +23,23 @@ function hasRealCloudinary() {
   return ![cloudName, apiKey, apiSecret].some((v) => String(v).includes("dummy"));
 }
 
-function saveLocalFile(file) {
+function saveLocalFile(req, file) {
   const ext = path.extname(file.originalname || "") || ".jpg";
   const publicId = `local_${crypto.randomBytes(12).toString("hex")}`;
   const filename = `${publicId}${ext}`;
   const filepath = path.join(uploadsDir, filename);
   fs.writeFileSync(filepath, file.buffer);
-  const baseUrl = `http://localhost:${env.port}`;
+  
+  const host = req ? req.get("host") : `localhost:${env.port}`;
+  const protocol = req ? req.protocol : "http";
+  const baseUrl = `${protocol}://${host}`;
   return {
     url: `${baseUrl}/uploads/${filename}`,
     publicId,
   };
 }
 
-const uploadFile = asyncHandler(async (req, res) => {
-  if (!req.file) return res.status(400).json({ success: false, message: "No file provided" });
-
-  // Prefer Cloudinary when real credentials exist; otherwise persist locally so admin images survive refresh
+async function uploadSingleFileToCloudinaryOrLocal(req, file) {
   if (hasRealCloudinary()) {
     try {
       const streamUpload = (buffer) =>
@@ -51,17 +51,30 @@ const uploadFile = asyncHandler(async (req, res) => {
           stream.end(buffer);
         });
 
-      const result = await streamUpload(req.file.buffer);
-      return res
-        .status(201)
-        .json(new ApiResponse(201, "File uploaded", { url: result.secure_url, publicId: result.public_id }));
+      const result = await streamUpload(file.buffer);
+      return { url: result.secure_url, publicId: result.public_id };
     } catch (err) {
       console.warn("Cloudinary upload failed, falling back to local storage:", err?.message || err);
     }
   }
 
-  const local = saveLocalFile(req.file);
-  return res.status(201).json(new ApiResponse(201, "File uploaded", local));
+  return saveLocalFile(req, file);
+}
+
+const uploadFile = asyncHandler(async (req, res) => {
+  const files = req.files && req.files.length > 0 ? req.files : req.file ? [req.file] : [];
+
+  if (files.length === 0) {
+    return res.status(400).json({ success: false, message: "No file provided" });
+  }
+
+  if (files.length === 1) {
+    const uploaded = await uploadSingleFileToCloudinaryOrLocal(req, files[0]);
+    return res.status(201).json(new ApiResponse(201, "File uploaded", uploaded));
+  }
+
+  const results = await Promise.all(files.map((file) => uploadSingleFileToCloudinaryOrLocal(req, file)));
+  return res.status(201).json(new ApiResponse(201, "Files uploaded", results));
 });
 
 const deleteFile = asyncHandler(async (req, res) => {

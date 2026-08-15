@@ -51,7 +51,7 @@ function LoginPage() {
         <div className="text-center">
           <Link to="/" className="inline-block mb-4">
             <span className="text-3xl font-extrabold tracking-tight text-gray-900">
-              Cool<span className="text-sky-600"> Breeze</span>
+              Air<span className="text-sky-600"> Covo</span>
             </span>
           </Link>
           <h2 className="text-2xl font-bold text-gray-900">Sign In</h2>
@@ -93,7 +93,7 @@ function LoginPage() {
           </div>
           
           <div className="text-xs text-gray-600 mt-4">
-            By continuing, you agree to Cool Breeze&apos;s <Link to="/policies/terms" className="text-sky-700 hover:underline">Conditions of Use</Link> and <Link to="/policies/privacy" className="text-sky-700 hover:underline">Privacy Notice</Link>.
+            By continuing, you agree to Air Covo&apos;s <Link to="/policies/terms" className="text-sky-700 hover:underline">Conditions of Use</Link> and <Link to="/policies/privacy" className="text-sky-700 hover:underline">Privacy Notice</Link>.
           </div>
         </form>
 
@@ -103,7 +103,7 @@ function LoginPage() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="px-2 bg-white text-gray-500">New to Cool Breeze?</span>
+              <span className="px-2 bg-white text-gray-500">New to Air Covo?</span>
             </div>
           </div>
 
@@ -112,7 +112,7 @@ function LoginPage() {
               to="/register"
               className="w-full flex justify-center bg-gray-100 hover:bg-gray-200 border border-gray-300 rounded-md py-1.5 px-4 text-sm font-medium text-gray-900 shadow-sm transition-colors"
             >
-              Create your Cool Breeze account
+              Create your Air Covo account
             </Link>
           </div>
         </div>

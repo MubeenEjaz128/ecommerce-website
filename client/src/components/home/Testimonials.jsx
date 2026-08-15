@@ -10,7 +10,7 @@ const testimonials = [
   },
   {
     name: "Priya Sharma",
-    quote: "Clear specs and honest pricing. Installation guidance from Cool Breeze made the purchase easy.",
+    quote: "Clear specs and honest pricing. Installation guidance from Air Covo made the purchase easy.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=160&h=160&fit=crop&q=80",
   },
@@ -22,7 +22,7 @@ const testimonials = [
   },
   {
     name: "Aisha Khan",
-    quote: "Switched to a 1.5 ton split from Cool Breeze. Energy rating matched what was advertised.",
+    quote: "Switched to a 1.5 ton split from Air Covo. Energy rating matched what was advertised.",
     rating: 5,
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=160&h=160&fit=crop&q=80",
   },
@@ -54,7 +54,7 @@ function Testimonials() {
           Trusted by Thousands
         </h2>
         <p className="mt-4 text-base text-slate-600 max-w-2xl mx-auto">
-          Discover why our customers rely on Cool Breeze for unmatched cooling performance, energy efficiency, and reliability.
+          Discover why our customers rely on Air Covo for unmatched cooling performance, energy efficiency, and reliability.
         </p>
       </div>
 

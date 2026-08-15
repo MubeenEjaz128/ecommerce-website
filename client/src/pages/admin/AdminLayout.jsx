@@ -57,7 +57,7 @@ function AdminLayout() {
           </button>
           <div className="flex items-center gap-2">
             <Store className="text-blue-500" size={24} />
-            <span className="font-bold text-xl tracking-wide hidden sm:block">Cool Breeze <span className="text-blue-500 font-normal">Admin</span></span>
+            <span className="font-bold text-xl tracking-wide hidden sm:block">Air Covo <span className="text-blue-500 font-normal">Admin</span></span>
           </div>
         </div>
         

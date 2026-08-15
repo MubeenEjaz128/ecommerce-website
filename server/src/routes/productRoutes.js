@@ -4,7 +4,6 @@ const { prisma } = require("../config/db");
 const buildCrudController = require("../controllers/crudController");
 const { protect, authorize } = require("../middlewares/auth");
 const validate = require("../middlewares/validate");
-
 const slugify = require("slugify");
 
 const controller = buildCrudController(prisma.product, "Product", {
@@ -14,31 +13,112 @@ const controller = buildCrudController(prisma.product, "Product", {
   defaultSort: "-createdAt",
   transformCreate: (req) => {
     const data = { ...req.body };
-    if (data.name && !data.slug) data.slug = slugify(data.name, { lower: true, strict: true });
-    return data;
+    const brandId = data.brandId || data.brand;
+    const categoryId = data.categoryId || data.category;
+
+    delete data.brand;
+    delete data.category;
+    delete data.brandId;
+    delete data.categoryId;
+
+    const payload = {
+      ...data,
+      brandId,
+      categoryId,
+      price: Number(data.price),
+    };
+
+    if (payload.name && !payload.slug) {
+      payload.slug = slugify(payload.name, { lower: true, strict: true });
+    }
+
+    if (Array.isArray(data.images)) {
+      payload.images = {
+        create: data.images.map((img) => ({
+          url: img.url,
+          publicId: img.publicId || null,
+          alt: img.alt || payload.name || "",
+          isPrimary: Boolean(img.isPrimary),
+        })),
+      };
+    }
+
+    if (Array.isArray(data.variants)) {
+      payload.variants = {
+        create: data.variants.map((v, i) => ({
+          size: v.size || null,
+          color: v.color || null,
+          sku: String(v.sku || `SKU-${Date.now()}-${i}`).trim(),
+          price: Number(v.price) || 0,
+          stock: Number(v.stock) || 0,
+        })),
+      };
+    }
+
+    return payload;
   },
   transformUpdate: (req) => {
     const data = { ...req.body };
-    if (data.name && !data.slug) data.slug = slugify(data.name, { lower: true, strict: true });
-    return data;
-  }
+    const brandId = data.brandId || data.brand;
+    const categoryId = data.categoryId || data.category;
+
+    delete data.brand;
+    delete data.category;
+    delete data.brandId;
+    delete data.categoryId;
+
+    const payload = { ...data };
+    if (brandId) payload.brandId = brandId;
+    if (categoryId) payload.categoryId = categoryId;
+    if (payload.price !== undefined) payload.price = Number(payload.price);
+
+    if (payload.name && !payload.slug) {
+      payload.slug = slugify(payload.name, { lower: true, strict: true });
+    }
+
+    if (Array.isArray(data.images)) {
+      payload.images = {
+        deleteMany: {},
+        create: data.images.map((img) => ({
+          url: img.url,
+          publicId: img.publicId || null,
+          alt: img.alt || payload.name || "",
+          isPrimary: Boolean(img.isPrimary),
+        })),
+      };
+    }
+
+    if (Array.isArray(data.variants)) {
+      payload.variants = {
+        deleteMany: {},
+        create: data.variants.map((v, i) => ({
+          size: v.size || null,
+          color: v.color || null,
+          sku: String(v.sku || `SKU-${Date.now()}-${i}`).trim(),
+          price: Number(v.price) || 0,
+          stock: Number(v.stock) || 0,
+        })),
+      };
+    }
+
+    return payload;
+  },
 });
 
-// Validate SKUs in request body for create/update: ensure no duplicate SKUs in payload and no collisions with other products
+// Validate SKUs in request body for create/update
 async function validateVariantSkus(req, res, next) {
   try {
     const variants = Array.isArray(req.body.variants) ? req.body.variants : [];
     const skus = variants.map((v) => String(v.sku || "").trim()).filter(Boolean);
-    // duplicates in payload
+
     const dup = skus.find((s, i) => skus.indexOf(s) !== i);
     if (dup) return res.status(400).json({ success: false, message: `Duplicate SKU in variants: ${dup}` });
 
-    // Check existing variants in the database
     if (skus.length) {
       const existingVariants = await prisma.productVariant.findMany({
-        where: { sku: { in: skus } }
+        where: { sku: { in: skus } },
       });
-      
+
       if (existingVariants.length > 0) {
         if (req.params.slug) {
           const prod = await prisma.product.findUnique({ where: { slug: req.params.slug } });
@@ -76,17 +156,14 @@ router.get("/suggestions", query("q").optional().isString().trim(), validate, as
     let whereClause = {};
     if (keyword) {
       whereClause = {
-        OR: [
-          { name: { contains: keyword } },
-          { description: { contains: keyword } }
-        ]
+        OR: [{ name: { contains: keyword } }, { description: { contains: keyword } }],
       };
     }
     const items = await prisma.product.findMany({
       where: whereClause,
       select: { name: true, slug: true, price: true, ratingAvg: true, images: { take: 1, select: { url: true } } },
       take: 8,
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: "desc" },
     });
 
     return res.status(200).json({ success: true, message: "Suggestions fetched", data: items });
@@ -104,8 +181,15 @@ router.post(
   body("name").trim().notEmpty().withMessage("Product name is required"),
   body("description").trim().notEmpty().withMessage("Description is required"),
   body("price").isNumeric().withMessage("Price must be numeric"),
-  body("brandId").isString().notEmpty().withMessage("Brand is required"),
-  body("categoryId").isString().notEmpty().withMessage("Category is required"),
+  body().custom((reqBody) => {
+    if (!reqBody.brandId && !reqBody.brand) {
+      throw new Error("Brand is required");
+    }
+    if (!reqBody.categoryId && !reqBody.category) {
+      throw new Error("Category is required");
+    }
+    return true;
+  }),
   validateVariantSkus,
   validate,
   controller.create,

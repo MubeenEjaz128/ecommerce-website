@@ -11,7 +11,7 @@ function Footer() {
   const handleNewsletter = (e) => {
     e.preventDefault();
     if (!email.trim()) return;
-    toast.success("Thanks for subscribing to Cool Breeze updates!");
+    toast.success("Thanks for subscribing to Air Covo updates!");
     setEmail("");
   };
 
@@ -143,7 +143,7 @@ function Footer() {
       </div>
 
       <div className="border-t border-slate-200 py-5 text-center text-xs text-slate-500">
-        <p>&copy; {new Date().getFullYear()} Cool Breeze. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Air Covo. All rights reserved.</p>
       </div>
     </motion.footer>
   );
