@@ -11,6 +11,7 @@
 All specified target files exist and have been updated:
 - `client/index.html`
 - `client/src/components/navigation/BrandLogo.jsx`
+- `client/src/components/home/Hero.jsx`
 - `client/src/components/navigation/Footer.jsx`
 - `client/src/pages/admin/AdminLayout.jsx`
 - `client/src/pages/admin/AdminLoginPage.jsx`
@@ -41,4 +42,5 @@ All specified target files exist and have been updated:
 - [x] Upload middleware updated to accept all common image formats: PNG, JPG, JPEG, WEBP, GIF, SVG, AVIF, BMP, TIFF, HEIC.
 - [x] Admin `ProductEditor` allows multi-file image selection with progress and clear error feedback.
 - [x] `ProductGrid` lazy loading implemented via `IntersectionObserver` for progressive batch rendering on scroll.
-- [x] Complete brand name update from "Cool Breeze" / "Cooling Shop" to **Air Covo** across all components, titles, footers, meta descriptions, and seed files.
+- [x] Hero slider banner badge updated to `Air Covo`.
+- [x] Complete brand name update from "Cool Breeze" / "Cooling Shop" to **Air Covo** across all components, titles, footers, meta descriptions, hero slider, and seed files.
