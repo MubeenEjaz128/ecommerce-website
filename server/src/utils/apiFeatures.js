@@ -28,29 +28,29 @@ class PrismaApiFeatures {
 
       if (key === "category") {
         const strVal = String(value).trim();
-        this.args.where.category = {
-          is: {
+        if (strVal && strVal !== "all") {
+          this.args.where.category = {
             OR: [
               { id: strVal },
               { name: { contains: strVal } },
               { slug: { contains: strVal } },
             ],
-          },
-        };
+          };
+        }
         return;
       }
 
       if (key === "brand") {
         const strVal = String(value).trim();
-        this.args.where.brand = {
-          is: {
+        if (strVal && strVal !== "all") {
+          this.args.where.brand = {
             OR: [
               { id: strVal },
               { name: { contains: strVal } },
               { slug: { contains: strVal } },
             ],
-          },
-        };
+          };
+        }
         return;
       }
 
